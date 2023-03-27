@@ -45,7 +45,7 @@ FMPluginEditor::FMPluginEditor (FMPluginProcessor& p)
     */
 
     try{
-        mymodule=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/testplugin/python_models/my_scripted_module.pt");
+        mymodule=torch::jit::load("../python_models/my_scripted_module.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
