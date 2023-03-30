@@ -1,3 +1,5 @@
 testplugin/build/
 drums_demix/Drums_Demix_models/saved_models/
 drums_demix/build/
+.DS_Store
+drums_demix/CMakeLists.txt
