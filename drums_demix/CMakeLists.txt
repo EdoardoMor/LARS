@@ -16,7 +16,7 @@ cmake_minimum_required(VERSION 3.15)
 # `project()` command. `project()` sets up some helpful variables that describe source/binary
 # directories, and the current project version. This is a standard CMake command.
 
-project(test_plugin VERSION 0.0.1)
+project(drums_demix VERSION 0.0.1)
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
@@ -43,11 +43,11 @@ add_subdirectory(C:/Juce/JUCE ./JUCE)                    # If you've put JUCE in
 # the formats specified by the FORMATS arguments. This function accepts many optional arguments.
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 
-juce_add_plugin(test_plugin
+juce_add_plugin(drums_demix
     # VERSION ...                               # Set this if the plugin version is different to the project version
     # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
     # ICON_SMALL ...
-    COMPANY_NAME Fregias ent.                   # Specify the name of the plugin's author
+    COMPANY_NAME Lab03                   # Specify the name of the plugin's author
     IS_SYNTH TRUE                       # Is this a synth or an effect?
     NEEDS_MIDI_INPUT TRUE               # Does the plugin need midi input?
     # NEEDS_MIDI_OUTPUT TRUE/FALSE              # Does the plugin need midi output?
@@ -55,11 +55,11 @@ juce_add_plugin(test_plugin
     NEEDS_MIDI_OUTPUT TRUE
     # EDITOR_WANTS_KEYBOARD_FOCUS TRUE/FALSE    # Does the editor need keyboard focus?
     COPY_PLUGIN_AFTER_BUILD TRUE        # Should the plugin be installed to a default location after building?
-    PLUGIN_MANUFACTURER_CODE Frgs               # A four-character manufacturer id with at least one upper-case character
-    PLUGIN_CODE Tspl                            # A unique four-character plugin id with exactly one upper-case character
+    PLUGIN_MANUFACTURER_CODE Lbzt               # A four-character manufacturer id with at least one upper-case character
+    PLUGIN_CODE Drdx                            # A unique four-character plugin id with exactly one upper-case character
                                                 # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
     FORMATS AU VST3 Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-    PRODUCT_NAME "test_plugin")        # The name of the final executable, which can differ from the target name
+    PRODUCT_NAME "drums_demix")        # The name of the final executable, which can differ from the target name
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
@@ -67,14 +67,14 @@ juce_add_plugin(test_plugin
 # include all your JUCE module headers; if you're happy to include module headers directly, you
 # probably don't need to call this.
 
-juce_generate_juce_header(test_plugin)
+juce_generate_juce_header(drums_demix)
 
 # `target_sources` adds source files to a target. We pass the target that needs the sources as the
 # first argument, then a visibility parameter for the sources which should normally be PRIVATE.
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
 
-target_sources(test_plugin
+target_sources(drums_demix
     PRIVATE
     src/PluginEditor.cpp
     src/PluginProcessor.cpp
@@ -91,7 +91,7 @@ target_sources(test_plugin
 # definitions will be visible both to your code, and also the JUCE module code, so for new
 # definitions, pick unique names that are unlikely to collide! This is a standard CMake command.
 
-target_compile_definitions(test_plugin
+target_compile_definitions(drums_demix
     PUBLIC # 
         JUCE_ALSA=1
         JUCE_DIRECTSOUND=1
@@ -122,7 +122,7 @@ target_compile_definitions(test_plugin
 # here too. This is a standard CMake command.
 
 
-target_link_libraries(test_plugin
+target_link_libraries(drums_demix
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
         juce::juce_audio_utils
@@ -140,11 +140,11 @@ target_link_libraries(test_plugin
 
 if (MSVC)
     file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
-    add_custom_command(TARGET test_plugin_Standalone
+    add_custom_command(TARGET drums_demix_Standalone
                         POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E copy_if_different
                         ${TORCH_DLLS}
-                        $<TARGET_FILE_DIR:test_plugin_Standalone>)
+                        $<TARGET_FILE_DIR:drums_demix_Standalone>)
 endif (MSVC)
 
 add_executable(test_nn
