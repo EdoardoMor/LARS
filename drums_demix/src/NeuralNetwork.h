@@ -1,4 +1,7 @@
+
+#include <cmath>
 #include <torch/torch.h>
+#include <torch/script.h>
 
 //N.B. forward functions pass the arguments by reference! --> I am not allowed to modify the input data
 class NeuralNetwork : torch::nn::Module { //inheriting from nn::Module

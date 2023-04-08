@@ -216,11 +216,23 @@ class UNetUtils:
 
     def batch_stft(self, x, pad: bool = True, return_complex: bool = False):
         x_shape = x.size()
+        print("x_shape: " + str(x_shape))
         x = x.reshape(-1, x_shape[-1])
         if pad:
             x = self.pad_stft_input(x)
         S = self._stft(x)
-        S = S.reshape(x_shape[:-1] + S.shape[-2:])
+
+        print("S.shape[]: " + str(S.shape[:]))
+
+        print("x_shape[:-1]: " + str(x_shape[:-1]))
+
+        print("S.shape[-2:]: " + str(S.shape[-2:]))
+
+        S = S.reshape(x_shape[:-1] + S.shape[-2:]) # aggiunge una dimensione alla S: da [2, 2049, 1347] -> [1, 2, 2049, 1347]
+
+        print("S.shape(), post reshape: " + str(S.shape[:]))
+
+
         if return_complex:
             return S
         return S.abs(), S.angle()

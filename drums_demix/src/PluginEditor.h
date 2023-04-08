@@ -48,6 +48,9 @@ public:
      // from MidiKeyboardState
     void handleNoteOff(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity) override; 
 
+    juce::AudioBuffer<float> getAudioBufferFromFile(juce::File file);
+
+
 
 private:
     juce::ToggleButton envToggle; 
@@ -65,6 +68,8 @@ private:
 
     //load a TorchScript module:
     torch::jit::script::Module mymodule;
+
+    juce::AudioFormatManager formatManager;
 
     /*
     try{
