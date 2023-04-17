@@ -3,3 +3,7 @@ drums_demix/Drums_Demix_models/saved_models/
 drums_demix/build/
 .DS_Store
 drums_demix/CMakeLists.txt
+PyfromCppPlugin/build/.vs/pyfromcpp_plugin/v17/Browse.vc.db
+PyfromCppPlugin/build/.vs/pyfromcpp_plugin/v17/ipch/AutoPCH/f273fdbdb91ff1b1/PLUGINEDITOR.ipch
+PyfromCppPlugin/build/pyfromcpp_plugin_artefacts/Debug/pyfromcpp_plugin_SharedCode.lib
+PyfromCppPlugin/build/pyfromcpp_plugin_artefacts/Debug/Standalone/torch_cpu.dll

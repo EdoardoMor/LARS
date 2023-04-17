@@ -1,0 +1,20 @@
+^C:\TESTING_CODES\PYFROMCPPPLUGIN\BUILD\CMAKEFILES\1B2887933797ABE06A81AE646D6FFD4B\RESOURCES.RC.RULE
+setlocal
+JUCE\tools\extras\Build\juceaide\juceaide_artefacts\Debug\juceaide.exe rcfile C:/Testing_Codes/PyfromCppPlugin/build/pyfromcpp_plugin_artefacts/JuceLibraryCode/Info.txt C:/Testing_Codes/PyfromCppPlugin/build/pyfromcpp_plugin_artefacts/JuceLibraryCode/resources.rc
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\TESTING_CODES\PYFROMCPPPLUGIN\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Testing_Codes/PyfromCppPlugin -BC:/Testing_Codes/PyfromCppPlugin/build --check-stamp-file C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

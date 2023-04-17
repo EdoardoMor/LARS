@@ -1,0 +1,13 @@
+C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/pyfromcpp_plugin.dir
+C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/pyfromcpp_plugin_All.dir
+C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/pyfromcpp_plugin_Standalone.dir
+C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/pyfromcpp_plugin_VST3.dir
+C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/test_nn.dir
+C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/INSTALL.dir
+C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/ALL_BUILD.dir
+C:/Testing_Codes/PyfromCppPlugin/build/CMakeFiles/ZERO_CHECK.dir
+C:/Testing_Codes/PyfromCppPlugin/build/JUCE/CMakeFiles/INSTALL.dir
+C:/Testing_Codes/PyfromCppPlugin/build/JUCE/CMakeFiles/ALL_BUILD.dir
+C:/Testing_Codes/PyfromCppPlugin/build/JUCE/modules/CMakeFiles/INSTALL.dir
+C:/Testing_Codes/PyfromCppPlugin/build/JUCE/extras/Build/CMakeFiles/INSTALL.dir
+C:/Testing_Codes/PyfromCppPlugin/build/JUCE/extras/Build/juceaide/CMakeFiles/INSTALL.dir
