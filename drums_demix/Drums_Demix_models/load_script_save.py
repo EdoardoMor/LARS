@@ -38,10 +38,12 @@ mag, phase = utils.batch_stft(x)
 
 
 
-print
 
 #scripted_model = torch.jit.trace(model, mag)
 #scripted_model.save('my_scripted_module.pt')
+
+scripted_model = torch.jit.script(model)
+scripted_model.save('my_scripted_module.pt')
 
 
 print("test")

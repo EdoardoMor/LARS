@@ -15,6 +15,8 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <torch/torch.h>
 #include <torch/script.h>
+#include <iostream>
+#include <cmath>
 
 
 #include "PluginProcessor.h"
@@ -49,6 +51,9 @@ public:
     void handleNoteOff(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity) override; 
 
     juce::AudioBuffer<float> getAudioBufferFromFile(juce::File file);
+
+    void write_binary(at::Tensor t);
+    void FillSin( std::vector<double>& v );
 
 
 

@@ -82,7 +82,7 @@ class Utils{
         torch::Tensor x2 = torch::cat({ left_pad, x, right_pad }, 0);
         */
 
-        torch::Tensor y = torch::stft(x, this->n_fft, this->hop_length, this->win_length, this->hann_win, true, "reflect", false, false, true);
+        torch::Tensor y = torch::stft(x, this->n_fft, this->hop_length, this->win_length, this->hann_win, true, "reflect", false, true, true);
         //torch::Tensor y = torch::stft(x2.transpose(0,1), (int) this->n_fft, (int) this->hop_length,(int) this->win_length);
         //torch::Tensor y = torch::stft(x2);
 
@@ -99,7 +99,7 @@ class Utils{
 
 
         //x = x.reshape(-1, x_shape[-1])
-        x = ourReshape(x);
+        //x = ourReshape(x);
 
         DBG("x after reshape");
         DBG(x.sizes()[0]);
@@ -171,7 +171,7 @@ class Utils{
                            */
 
     torch::Tensor _istft(torch::Tensor x, int trim_length=NULL){
-        return torch::istft(x, this->n_fft, this->hop_length, this->win_length, this->hann_win, true, false, false, trim_length, false );
+        return torch::istft(x, this->n_fft, this->hop_length, this->win_length, this->hann_win, true, false, true, trim_length, false );
 
         //torch::stft(x, this->n_fft, this->hop_length, this->win_length, this->hann_win, true, "reflect", false, false, true);
     }

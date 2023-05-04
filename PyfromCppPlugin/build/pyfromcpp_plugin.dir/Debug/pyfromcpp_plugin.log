@@ -1,7 +1,0 @@
-﻿  PluginEditor.cpp
-C:\Testing_Codes\PyfromCppPlugin\src\PluginEditor.cpp(89,57): warning C4100: 'slider': parametro formale senza riferimenti
-C:\Testing_Codes\PyfromCppPlugin\src\PluginEditor.cpp(128,60): warning C4100: 'source': parametro formale senza riferimenti
-C:\Testing_Codes\PyfromCppPlugin\src\PluginEditor.cpp(135,61): warning C4100: 'source': parametro formale senza riferimenti
-C:\Testing_Codes\PyfromCppPlugin\src\PluginEditor.cpp(175,12): warning C4189: 'my_result': variabile locale inizializzata ma senza riferimenti
-C:\LibTorch\libtorch-debug\include\c10\util\Optional.h(769): warning C4702: codice non eseguibile
-  pyfromcpp_plugin.vcxproj -> C:\Testing_Codes\PyfromCppPlugin\build\pyfromcpp_plugin_artefacts\Debug\pyfromcpp_plugin_SharedCode.lib

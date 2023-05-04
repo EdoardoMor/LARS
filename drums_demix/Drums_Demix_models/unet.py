@@ -2,7 +2,7 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Tuple
+from typing import Tuple, List
 
 
 class UNetEncoderBlock(nn.Module):
@@ -57,7 +57,7 @@ class UNet(nn.Module):
         self.power = power
 
         # Audio utility object
-        self.utils = UNetUtils(F=f_size, T=t_size, device=device)
+        #self.utils = UNetUtils(F=f_size, T=t_size, device=device)
 
         # Frontend
         self.input_norm = nn.BatchNorm2d(f_size)
@@ -124,16 +124,42 @@ class UNet(nn.Module):
 
         return mask
 
-    def forward(self, x):
+    def forward(self, x) -> torch.Tensor:
         input_size = x.size()
-        x = self.utils.fold_unet_inputs(x)
-        i = self.utils.trim_freq_dim(x)
+        x = self.fold_unet_inputs(x)
+        i = self.trim_freq_dim(x)
         mask = self.forward_impl(i)
-        mask = self.utils.pad_freq_dim(mask)
+        mask = self.pad_freq_dim(mask)
         x_hat = mask * x
-        x_hat = self.utils.unfold_unet_outputs(x_hat, input_size)
-        mask = self.utils.unfold_unet_outputs(mask, input_size)
-        return x_hat, mask
+        x_hat = self.unfold_unet_outputs(x_hat, input_size)
+        mask = self.unfold_unet_outputs(mask, input_size)
+        return x_hat
+    
+    def fold_unet_inputs(self, spec):
+        time_dim = spec.size(-1)
+        pad_len = math.ceil(time_dim / 512) * 512 - time_dim
+        padded = F.pad(spec, (0, pad_len))
+        #if time_dim < 512:
+            #return padded
+        out = torch.cat(torch.split(padded, 512, dim=-1), dim=0)
+        return out
+    
+    def trim_freq_dim(self, x):
+        return x[..., :2048, :]
+    
+    def pad_freq_dim(self, x):
+        #padding = (4096 // 2 + 1) - x.size(-2)
+        padding = 1
+        x = F.pad(x, (0, 0, 0, padding))
+        return x
+    
+    def unfold_unet_outputs(self, x, input_size: List[int]):
+        batch_size, n_frames = input_size[0], input_size[-1]
+        #if x.size(0) == batch_size:
+            #return x[..., :n_frames]
+        x = torch.cat(torch.split(x, batch_size, dim=0), dim=-1)
+        return x[..., :n_frames]
+
 
 
 class UNetW(UNet):

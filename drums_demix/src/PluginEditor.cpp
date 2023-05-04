@@ -10,10 +10,12 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Utils.cpp"
+#include "cpp-create-wav.cpp"
 
 
 #include <torch/torch.h>
 #include <torch/script.h>
+#include <cmath>
 
 //==============================================================================
 FMPluginEditor::FMPluginEditor (FMPluginProcessor& p)
@@ -174,15 +176,21 @@ void FMPluginEditor::buttonClicked(juce::Button* btn)
 
         torch::Tensor stftFileMag = utils.batch_stft(fileTensor, stftFilePhase);
 
+        stftFileMag = torch::unsqueeze(stftFileMag, 0);
+
+        //stftFilePhase = torch::unsqueeze(stftFilePhase, 0);
+
         DBG("stftFileMag sizes: ");
         DBG(stftFileMag.sizes()[0]);
         DBG(stftFileMag.sizes()[1]);
         DBG(stftFileMag.sizes()[2]);
+        DBG(stftFileMag.sizes()[3]);
 
         DBG("stftFilePhase sizes: ");
         DBG(stftFilePhase.sizes()[0]);
         DBG(stftFilePhase.sizes()[1]);
         DBG(stftFilePhase.sizes()[2]);
+        //DBG(stftFilePhase.sizes()[3]);
 
         //std::vector<float> fileInput(stftFile.data_ptr<float>(), stftFile.data_ptr<float>() + stftFile.numel());
 
@@ -193,15 +201,24 @@ void FMPluginEditor::buttonClicked(juce::Button* btn)
           //torch_options); 
 
         std::vector<torch::jit::IValue> my_input;
+        //my_input.push_back(torch::ones({1, 2, 2049, 1347}));
         my_input.push_back(stftFileMag);
+
+        //c10::IValue mymodForward = mymodule.forward(my_input);
+
+        //DBG(mymodForward.toInt());
 
         at::Tensor outputs = mymodule.forward(my_input).toTensor();
 
+        outputs = torch::squeeze(outputs, 0);
         DBG("outputs sizes: ");
         DBG(outputs.sizes()[0]);
         DBG(outputs.sizes()[1]);
         DBG(outputs.sizes()[2]);
-        DBG(outputs.sizes()[3]);
+        //DBG(outputs.sizes()[3]);
+        
+
+        /*
 
         at::Tensor masked = torch::mul(outputs, stftFileMag);
 
@@ -211,13 +228,44 @@ void FMPluginEditor::buttonClicked(juce::Button* btn)
         DBG(masked.sizes()[2]);
         DBG(masked.sizes()[3]);
 
-        at::Tensor y = utils.batch_istft(masked, stftFilePhase, fileTensor.sizes()[1]);
+        */
+
+        
+
+        at::Tensor y = utils.batch_istft(outputs, stftFilePhase, fileTensor.sizes()[1]);
 
         DBG("outputTensor sizes: ");
         DBG(y.sizes()[0]);
         DBG(y.sizes()[1]);
 
+        torch::save(y, "test2.pt");
 
+        /*
+
+        std::vector<double> yvec( 100000 );
+        FillSin(yvec);
+        
+        for( int n=0; n < yvec.size(); ++n )
+        {
+            DBG(yvec[n]);
+        }
+
+        auto options2 = torch::TensorOptions().dtype(torch::kFloat32);
+
+        torch::Tensor y = torch::from_blob(yvec.data(), {1, 100000}, options2);
+        */
+
+
+        
+
+        //write_binary(y);
+        //y = y.view(tensor.size(0), -1); //Here the shape of the data is batch, num_tensors
+
+        //write_wav();
+
+        DBG("wav scritto!");
+
+        
 
 
     }
@@ -237,4 +285,56 @@ void FMPluginEditor::handleNoteOff(juce::MidiKeyboardState *source, int midiChan
     audioProcessor.addMidi(msg2, 0); 
 }
 
+void FMPluginEditor::write_binary(at::Tensor t)
+{
+    t = t.contiguous();
 
+    int sizesMul = t.sizes()[0] * t.sizes()[1];
+    //std::vector<float> vectorT(t.data_ptr<float>(), t.data_ptr<float>()+t.numel());
+
+    const float* vectorT = t.data_ptr<float>();
+
+    /*
+    int nx = 10, ny = 10;
+
+    long double *buff1 = new long double[nx * ny];
+    long double *buff2 = new long double[nx * ny];
+
+    long double **data = new long double *[nx];
+    long double **data_read = new long double *[nx];
+    
+
+    for (int i = 0; i < nx; i++)
+    {
+        data[i] = buff1 + (i*ny);
+        data_read[i] = buff2 + (i*ny);
+    }
+    
+
+    data[4][4] = 10.0;
+    printf("%LF\n", data[4][4]);
+
+    */
+
+    FILE *file = fopen("test.bin", "wb");
+    fwrite(vectorT, sizeof(*vectorT), sizesMul, file);
+    fclose(file);
+
+    DBG("bin scritto!");
+
+
+    // delete pointer arrays
+   // delete [] vectorT;
+}
+
+void FMPluginEditor::FillSin( std::vector<double>& v )
+{
+    static const double PI = 4*atan(1.0);
+ 
+    for( int n=0; n < v.size(); ++n )
+    {
+        v[ n ] = sin( ( 2 * PI / n ) * 440);
+        //v[n] = n;
+        //DBG(v[n]);
+    }
+}
