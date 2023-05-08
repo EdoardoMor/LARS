@@ -52,8 +52,6 @@ public:
 
     juce::AudioBuffer<float> getAudioBufferFromFile(juce::File file);
 
-    void write_binary(at::Tensor t);
-    void FillSin( std::vector<double>& v );
 
 
 
@@ -76,13 +74,6 @@ private:
 
     juce::AudioFormatManager formatManager;
 
-    /*
-    try{
-      mymodule = torch::jit::load('my_scripted_module.pt');
-    }
-    catch(const c10::Error& e) {
-      return -1; //indicate error to calling the code
-    }*/
 
     
 
