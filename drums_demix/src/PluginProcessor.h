@@ -38,15 +38,15 @@
 //==============================================================================
 /**
 */
-class FMPluginProcessor  : public juce::AudioProcessor
+class DrumsDemixProcessor  : public juce::AudioProcessor
                             #if JucePlugin_Enable_ARA
                              , public juce::AudioProcessorARAExtension
                             #endif
 {
 public:
     //==============================================================================
-    FMPluginProcessor();
-    ~FMPluginProcessor() override;
+    DrumsDemixProcessor();
+    ~DrumsDemixProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -115,5 +115,5 @@ private:
 
 
       //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FMPluginProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrumsDemixProcessor)
 };

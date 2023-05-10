@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-FMPluginProcessor::FMPluginProcessor()
+DrumsDemixProcessor::DrumsDemixProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -36,17 +36,17 @@ FMPluginProcessor::FMPluginProcessor()
 {
 }
 
-FMPluginProcessor::~FMPluginProcessor()
+DrumsDemixProcessor::~DrumsDemixProcessor()
 {
 }
 
 //==============================================================================
-const juce::String FMPluginProcessor::getName() const
+const juce::String DrumsDemixProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool FMPluginProcessor::acceptsMidi() const
+bool DrumsDemixProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -55,7 +55,7 @@ bool FMPluginProcessor::acceptsMidi() const
    #endif
 }
 
-bool FMPluginProcessor::producesMidi() const
+bool DrumsDemixProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -64,7 +64,7 @@ bool FMPluginProcessor::producesMidi() const
    #endif
 }
 
-bool FMPluginProcessor::isMidiEffect() const
+bool DrumsDemixProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -73,37 +73,37 @@ bool FMPluginProcessor::isMidiEffect() const
    #endif
 }
 
-double FMPluginProcessor::getTailLengthSeconds() const
+double DrumsDemixProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int FMPluginProcessor::getNumPrograms()
+int DrumsDemixProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int FMPluginProcessor::getCurrentProgram()
+int DrumsDemixProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void FMPluginProcessor::setCurrentProgram (int index)
+void DrumsDemixProcessor::setCurrentProgram (int index)
 {
 }
 
-const juce::String FMPluginProcessor::getProgramName (int index)
+const juce::String DrumsDemixProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void FMPluginProcessor::changeProgramName (int index, const juce::String& newName)
+void DrumsDemixProcessor::changeProgramName (int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void FMPluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void DrumsDemixProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
@@ -112,14 +112,14 @@ void FMPluginProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
 }
 
-void FMPluginProcessor::releaseResources()
+void DrumsDemixProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool FMPluginProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool DrumsDemixProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
@@ -144,7 +144,7 @@ bool FMPluginProcessor::isBusesLayoutSupported (const BusesLayout& layouts) cons
 }
 #endif
 
-void FMPluginProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void DrumsDemixProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     //////////// 
     // deal with MIDI 
@@ -215,25 +215,25 @@ void FMPluginProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 }
 
 //==============================================================================
-bool FMPluginProcessor::hasEditor() const
+bool DrumsDemixProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* FMPluginProcessor::createEditor()
+juce::AudioProcessorEditor* DrumsDemixProcessor::createEditor()
 {
-    return new FMPluginEditor (*this);
+    return new DrumsDemixEditor (*this);
 }
 
 //==============================================================================
-void FMPluginProcessor::getStateInformation (juce::MemoryBlock& destData)
+void DrumsDemixProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void FMPluginProcessor::setStateInformation (const void* data, int sizeInBytes)
+void DrumsDemixProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -243,33 +243,33 @@ void FMPluginProcessor::setStateInformation (const void* data, int sizeInBytes)
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new FMPluginProcessor();
+    return new DrumsDemixProcessor();
 }
 
-double FMPluginProcessor::getDPhase(double freq, double sampleRate)
+double DrumsDemixProcessor::getDPhase(double freq, double sampleRate)
 {
     double two_pi = 3.1415927 * 2;
     return (two_pi / sampleRate) * freq;   
 }
-void FMPluginProcessor::updateFrequency(double newFreq)
+void DrumsDemixProcessor::updateFrequency(double newFreq)
 {
     baseFrequency = newFreq; 
 }
 
-void FMPluginProcessor::updateFMParams(double _modIndex, double _modDepth)
+void DrumsDemixProcessor::updateFMParams(double _modIndex, double _modDepth)
 {
     modIndex = _modIndex;
     modDepth = _modDepth;
 }
 
 
-void FMPluginProcessor::addMidi(juce::MidiMessage msg, int sampleOffset)
+void DrumsDemixProcessor::addMidi(juce::MidiMessage msg, int sampleOffset)
 {
   midiToProcess.addEvent(msg, sampleOffset);
 }
 
 
-void FMPluginProcessor::setEnvLength(double envLenSecs)
+void DrumsDemixProcessor::setEnvLength(double envLenSecs)
 {
     // calculate damp based on length
     if (envLenSecs == 0){// 

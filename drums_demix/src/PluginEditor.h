@@ -25,18 +25,21 @@
 //==============================================================================
 /**
 */
-class FMPluginEditor  :   public juce::AudioProcessorEditor,
+class DrumsDemixEditor  :   public juce::AudioProcessorEditor,
                           // listen to buttons
                           public juce::Button::Listener, 
                           // listen to sliders
                           public juce::Slider::Listener, 
                           // listen to piano keyboard widget
-                          private juce::MidiKeyboardState::Listener
+                          private juce::MidiKeyboardState::Listener,
+                          // listen to AudioThumbnail
+                          public juce::ChangeListener
+                          
 
 {
 public:
-    FMPluginEditor (FMPluginProcessor&);
-    ~FMPluginEditor() override;
+    DrumsDemixEditor (DrumsDemixProcessor&);
+    ~DrumsDemixEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -52,7 +55,12 @@ public:
 
     juce::AudioBuffer<float> getAudioBufferFromFile(juce::File file);
 
-
+    //VISUALIZER
+    void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+    void thumbnailChanged();
+    void paintIfNoFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds);
+    void paintIfFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds);
+    
 
 
 private:
@@ -68,18 +76,20 @@ private:
     //the test button
     juce::TextButton testButton;
     
-
+    //VISUALIZER
+    juce::AudioThumbnail thumbnail;
+    juce::AudioThumbnailCache thumbnailCache;
+    juce::AudioFormatManager formatManager;
+    
+    
     //load a TorchScript module:
     torch::jit::script::Module mymodule;
-
-    juce::AudioFormatManager formatManager;
-
-
     
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    FMPluginProcessor& audioProcessor;
+    DrumsDemixProcessor& audioProcessor;
+    
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FMPluginEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrumsDemixEditor)
 };

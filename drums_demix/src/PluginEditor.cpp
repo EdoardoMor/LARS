@@ -17,9 +17,8 @@
 #include <cmath>
 
 //==============================================================================
-FMPluginEditor::FMPluginEditor (FMPluginProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), 
-    miniPianoKbd{kbdState, juce::MidiKeyboardComponent::horizontalKeyboard} 
+DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
+    : AudioProcessorEditor (&p), miniPianoKbd{kbdState, juce::MidiKeyboardComponent::horizontalKeyboard}, formatManager(), thumbnailCache {5},thumbnail {512, formatManager, thumbnailCache},  audioProcessor (p)
 
 {    
     // listen to the mini piano
@@ -40,9 +39,22 @@ FMPluginEditor::FMPluginEditor (FMPluginProcessor& p)
     testButton.addListener(this);
 
     formatManager.registerBasicFormats();
+    
+    //VISUALIZER
+    thumbnail.addChangeListener(this);
+        
+
+
+    /*test
+    torch::Tensor tensor = torch::rand({1, 1});
+    std::cout << "prova" << std::endl;
+    std::cout << "JUCE and torch " << tensor << std::endl;
+    DBG(tensor[0].item<float>());
+    */
+    
 
     try{
-        mymodule=torch::jit::load("../src/scripted_modules/my_scripted_module.pt");
+        mymodule=torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -51,12 +63,12 @@ FMPluginEditor::FMPluginEditor (FMPluginProcessor& p)
 
 }
 
-FMPluginEditor::~FMPluginEditor()
+DrumsDemixEditor::~DrumsDemixEditor()
 {
 }
 
 //==============================================================================
-void FMPluginEditor::paint (juce::Graphics& g)
+void DrumsDemixEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
@@ -64,9 +76,18 @@ void FMPluginEditor::paint (juce::Graphics& g)
    // g.setColour (juce::Colours::white);
    // g.setFont (15.0f);
    // g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    
+    //VISUALIZER
+    juce::Rectangle<int> thumbnailBounds (10, 100, getWidth() - 20, getHeight() - 120);
+    
+           if (thumbnail.getNumChannels() == 0)
+               paintIfNoFileLoaded (g, thumbnailBounds);
+           else
+               paintIfFileLoaded (g, thumbnailBounds);
+    
 }
 
-void FMPluginEditor::resized()
+void DrumsDemixEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
@@ -78,12 +99,12 @@ void FMPluginEditor::resized()
     
 }
 
- void FMPluginEditor::sliderValueChanged (juce::Slider *slider)
+ void DrumsDemixEditor::sliderValueChanged (juce::Slider *slider)
 {
 
 }
 
-juce::AudioBuffer<float> FMPluginEditor::getAudioBufferFromFile(juce::File file)
+juce::AudioBuffer<float> DrumsDemixEditor::getAudioBufferFromFile(juce::File file)
 {
     //juce::AudioFormatManager formatManager - declared in header...`;
     auto* reader = formatManager.createReaderFor(file);
@@ -95,7 +116,7 @@ juce::AudioBuffer<float> FMPluginEditor::getAudioBufferFromFile(juce::File file)
 
 }
 
-void FMPluginEditor::buttonClicked(juce::Button* btn)
+void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 {
     if (btn == &envToggle){
         double envLen = 0;
@@ -107,13 +128,23 @@ void FMPluginEditor::buttonClicked(juce::Button* btn)
 
     if (btn == &testButton){
 
-        Utils utils = Utils::Utils();
 
         //***TAKE THE INPUT FROM THE MIXED DRUMS FILE***
 
 
         //-From Wav to AufioBuffer
-        juce::AudioBuffer<float> fileAudiobuffer = getAudioBufferFromFile(juce::File({"C:/POLIMI/MAE_Capstone/audio/1_funk-groove1_138_beat_4-4_socal.wav"}));
+       /*
+       std::vector<torch::jit::IValue> inputs;
+       inputs.push_back(torch::rand({28*28}));
+
+       at::Tensor outputs = mymodule.forward(inputs).toTensor();
+       std::vector<float> v(outputs.data_ptr<float>(), outputs.data_ptr<float>() + outputs.numel()); //conversione da tensor a std vector
+       DBG(v[0]);
+
+       */
+        
+        Utils utils = Utils();
+        juce::AudioBuffer<float> fileAudiobuffer = getAudioBufferFromFile(juce::File("/Users/alessandroorsatti/Desktop/1_funk-groove1_138_beat_4-4_socal.wav"));
 
         DBG("number of samples, audiobuffer");
         DBG(fileAudiobuffer.getNumSamples());
@@ -190,6 +221,9 @@ void FMPluginEditor::buttonClicked(juce::Button* btn)
 
         //***CREATE A STEREO, AUDIBLE OUTPUT***
 
+        torch::save(y, "/Users/alessandroorsatti/Desktop/test2.pt");
+
+
         //-Split output tensor in Left & Right
         torch::autograd::variable_list ySplit = torch::split(y, 1);
         at::Tensor yL = ySplit[0];
@@ -225,7 +259,7 @@ void FMPluginEditor::buttonClicked(juce::Button* btn)
         //-Print Wav
         juce::WavAudioFormat formatWav;
         std::unique_ptr<juce::AudioFormatWriter> writerY;
-        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File({"C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/testWavJuce4.wav"})),
+        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/testWavJuce4.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -237,7 +271,10 @@ void FMPluginEditor::buttonClicked(juce::Button* btn)
        
 
         DBG("wav scritto!");
-
+        
+        //VISUALIZER
+        thumbnail.setSource (new juce::FileInputSource (juce::File("/Users/alessandroorsatti/Desktop/1_funk-groove1_138_beat_4-4_socal.wav")));
+      
         
 
 
@@ -245,15 +282,47 @@ void FMPluginEditor::buttonClicked(juce::Button* btn)
 
 }
 
-void FMPluginEditor::handleNoteOn(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
+void DrumsDemixEditor::handleNoteOn(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
 {
     juce::MidiMessage msg1 = juce::MidiMessage::noteOn(midiChannel, midiNoteNumber, velocity);
     audioProcessor.addMidi(msg1, 0);
     
 }
 
-void FMPluginEditor::handleNoteOff(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
+void DrumsDemixEditor::handleNoteOff(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
 {
     juce::MidiMessage msg2 = juce::MidiMessage::noteOff(midiChannel, midiNoteNumber, velocity);
     audioProcessor.addMidi(msg2, 0); 
 }
+
+
+
+
+//VISUALIZER
+void DrumsDemixEditor::changeListenerCallback (juce::ChangeBroadcaster* source)
+  {
+      if (source == &thumbnail)       repaint();
+  }
+
+void DrumsDemixEditor::paintIfNoFileLoaded (juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds)
+  {
+      g.setColour (juce::Colours::darkgrey);
+      g.fillRect (thumbnailBounds);
+      g.setColour (juce::Colours::white);
+      g.drawFittedText ("No File Loaded", thumbnailBounds, juce::Justification::centred, 1);
+  }
+
+void DrumsDemixEditor::paintIfFileLoaded (juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds)
+ {
+     g.setColour (juce::Colours::white);
+     g.fillRect (thumbnailBounds);
+
+     g.setColour (juce::Colours::red);                               // [8]
+
+     thumbnail.drawChannels (g,                                      // [9]
+                             thumbnailBounds,
+                             0.0,                                    // start time
+                             thumbnail.getTotalLength(),             // end time
+                             1.0f);                                  // vertical zoom
+ }
+

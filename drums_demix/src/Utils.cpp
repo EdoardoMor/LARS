@@ -23,8 +23,8 @@ class Utils{
             win_length = _win_length;
         }
 
-        DBG("win length");
-        DBG(win_length);
+        //DBG("win length");
+        //DBG(win_length);
 
         if(! _hop_length){
             hop_length = floor(win_length / 4) ;
@@ -33,8 +33,8 @@ class Utils{
             hop_length = _hop_length;
         }
 
-        DBG("hop length");
-        DBG(hop_length);
+        //DBG("hop length");
+        //DBG(hop_length);
 
 
         power = _power;
@@ -89,38 +89,38 @@ class Utils{
 
     torch::Tensor batch_stft(torch::Tensor x, torch::Tensor& stftFilePhase, bool pad = true, bool return_complex = false){
         c10::IntArrayRef x_shape = x.sizes();
-
-        DBG("x_shape: ");
-        DBG(x_shape[0]);
-        DBG(x_shape[1]);
-        DBG(x_shape[2]);
+        
+        //DBG("x_shape: ");
+        //DBG(x_shape[0]);
+        //DBG(x_shape[1]);
+        //DBG(x_shape[2]);
 
 
         //x = x.reshape(-1, x_shape[-1])
         //x = ourReshape(x);
 
-        DBG("x after reshape");
-        DBG(x.sizes()[0]);
-        DBG(x.sizes()[1]);
-        DBG(x.sizes()[2]);
+        //DBG("x after reshape");
+        //DBG(x.sizes()[0]);
+        //DBG(x.sizes()[1]);
+        //DBG(x.sizes()[2]);
         
         if(pad){
             x = pad_stft_input(this->win_length, this->hop_length, x);
         }
 
 
-        DBG("x after pad");
-        DBG(x.sizes()[0]);
-        DBG(x.sizes()[1]);
-        DBG(x.sizes()[2]);
+        //DBG("x after pad");
+        //DBG(x.sizes()[0]);
+        //DBG(x.sizes()[1]);
+        //DBG(x.sizes()[2]);
         
 
         torch::Tensor S = _stft(x);
 
-        DBG("STFT sizes: ");
-        DBG(S.sizes()[0]);
-        DBG(S.sizes()[1]);
-        DBG(S.sizes()[2]);
+
+        c10::IntArrayRef S_shape = S.sizes();
+
+
 
 
         if (return_complex){
