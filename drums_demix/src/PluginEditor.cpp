@@ -28,15 +28,32 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     // editor's size to whatever you need it to be.
     setSize (600, 500);
 
-    addAndMakeVisible(envToggle);
-    envToggle.addListener(this);
+    //addAndMakeVisible(envToggle);
+    //envToggle.addListener(this);
 
 
-    addAndMakeVisible(miniPianoKbd);
+    //addAndMakeVisible(miniPianoKbd);
 
     addAndMakeVisible(testButton);
     testButton.setButtonText("TEST");
+    testButton.setEnabled(false);
     testButton.addListener(this);
+
+    addAndMakeVisible(playButton);
+    playButton.setButtonText("PLAY");
+    playButton.setEnabled(false);
+    playButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    playButton.addListener(this);
+
+    addAndMakeVisible(stopButton);
+    stopButton.setButtonText("STOP");
+    stopButton.setEnabled(false);
+    stopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    stopButton.addListener(this);
+
+    addAndMakeVisible(openButton);
+    openButton.setButtonText("OPEN");
+    openButton.addListener(this);
 
     formatManager.registerBasicFormats();
     
@@ -44,17 +61,8 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     thumbnail.addChangeListener(this);
         
 
-
-    /*test
-    torch::Tensor tensor = torch::rand({1, 1});
-    std::cout << "prova" << std::endl;
-    std::cout << "JUCE and torch " << tensor << std::endl;
-    DBG(tensor[0].item<float>());
-    */
-    
-
     try{
-        mymodule=torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module.pt");
+        mymodule=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -78,7 +86,7 @@ void DrumsDemixEditor::paint (juce::Graphics& g)
    // g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
     
     //VISUALIZER
-    juce::Rectangle<int> thumbnailBounds (10, 100, getWidth() - 20, getHeight() - 120);
+    juce::Rectangle<int> thumbnailBounds (10, 10, getWidth() - 20, getHeight() - 150);
     
            if (thumbnail.getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBounds);
@@ -92,9 +100,12 @@ void DrumsDemixEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
     float rowHeight = getHeight()/5; 
-    envToggle.setBounds(0, 0, getWidth()/2, rowHeight);
-    miniPianoKbd.setBounds(0, rowHeight * 3, getWidth(), rowHeight);
+    //envToggle.setBounds(0, 0, getWidth()/2, rowHeight);
+    //miniPianoKbd.setBounds(0, rowHeight * 3, getWidth(), rowHeight);
     testButton.setBounds(getWidth()/2, rowHeight * 4, getWidth()/2, getHeight()/5);
+    openButton.setBounds(0, rowHeight * 4, getWidth()/2, getHeight()/5);
+    playButton.setBounds(0, rowHeight * 4-getHeight()/12, getWidth()/2, getHeight()/12);
+    stopButton.setBounds(getWidth()/2, rowHeight * 4-getHeight()/12, getWidth()/2, getHeight()/12);
 
     
 }
@@ -132,19 +143,10 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         //***TAKE THE INPUT FROM THE MIXED DRUMS FILE***
 
 
-        //-From Wav to AufioBuffer
-       /*
-       std::vector<torch::jit::IValue> inputs;
-       inputs.push_back(torch::rand({28*28}));
+        //-From Wav to AudiofileBuffer
 
-       at::Tensor outputs = mymodule.forward(inputs).toTensor();
-       std::vector<float> v(outputs.data_ptr<float>(), outputs.data_ptr<float>() + outputs.numel()); //conversione da tensor a std vector
-       DBG(v[0]);
-
-       */
-        
-        Utils utils = Utils();
-        juce::AudioBuffer<float> fileAudiobuffer = getAudioBufferFromFile(juce::File("/Users/alessandroorsatti/Desktop/1_funk-groove1_138_beat_4-4_socal.wav"));
+        Utils utils = Utils::Utils();
+        juce::AudioBuffer<float> fileAudiobuffer = getAudioBufferFromFile(myFile);
 
         DBG("number of samples, audiobuffer");
         DBG(fileAudiobuffer.getNumSamples());
@@ -221,8 +223,6 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
         //***CREATE A STEREO, AUDIBLE OUTPUT***
 
-        torch::save(y, "/Users/alessandroorsatti/Desktop/test2.pt");
-
 
         //-Split output tensor in Left & Right
         torch::autograd::variable_list ySplit = torch::split(y, 1);
@@ -254,12 +254,12 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
 
         //-Create the stereo AudioBuffer
-        juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, 1377648); //need to change last argument to let it be dynamic!
+        juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, y.sizes()[1]); //need to change last argument to let it be dynamic!
 
         //-Print Wav
         juce::WavAudioFormat formatWav;
         std::unique_ptr<juce::AudioFormatWriter> writerY;
-        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/testWavJuce4.wav")),
+        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/testWavJuce5.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -273,12 +273,56 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         DBG("wav scritto!");
         
         //VISUALIZER
-        thumbnail.setSource (new juce::FileInputSource (juce::File("/Users/alessandroorsatti/Desktop/1_funk-groove1_138_beat_4-4_socal.wav")));
+        thumbnail.setSource (new juce::FileInputSource (myFile));
       
         
 
 
     }
+    if (btn == &openButton) {
+
+        juce::FileChooser chooser("Choose a Wav or Aiff File", juce::File::getSpecialLocation(juce::File::userDesktopDirectory), "*.wav;*.aiff;*.mp3");
+
+        if (chooser.browseForFileToOpen())
+        {
+            //juce::File myFile;
+            myFile = chooser.getResult();
+            juce::AudioFormatReader* reader = formatManager.createReaderFor(myFile);
+
+            if (reader != nullptr)
+            {
+
+                std::unique_ptr<juce::AudioFormatReaderSource> tempSource(new juce::AudioFormatReaderSource(reader, true));
+
+                //audioProcessor.transportProcessor.setSource(tempSource.get());
+                //transportStateChanged(Stopped);
+
+                playSource.reset(tempSource.release());
+                DBG("IFopenbuttonclicked");
+
+            }
+            DBG("openbuttonclicked");
+            testButton.setEnabled(true);
+            playButton.setEnabled(true);
+
+
+
+        }
+    }
+    if (btn == &playButton){
+        DBG("playbuttonclicked");
+        playButton.setEnabled(false);
+        stopButton.setEnabled(true);
+        
+
+    }
+    if (btn == &stopButton){
+        DBG("stopbuttonclicked");
+        playButton.setEnabled(true);
+        stopButton.setEnabled(false);
+
+    }
+
 
 }
 

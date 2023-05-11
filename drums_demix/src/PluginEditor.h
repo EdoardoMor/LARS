@@ -64,6 +64,19 @@ public:
 
 
 private:
+
+
+    enum TransportState
+    {
+      Stopped,
+      Starting,
+      Stopping,
+      Playing
+    };
+
+    TransportState state;
+
+
     juce::ToggleButton envToggle; 
 
     // torch::nn::Linear linear{1, 2}; 
@@ -75,11 +88,17 @@ private:
 
     //the test button
     juce::TextButton testButton;
+    juce::TextButton openButton;
+    juce::TextButton playButton;
+    juce::TextButton stopButton;
     
     //VISUALIZER
     juce::AudioThumbnail thumbnail;
     juce::AudioThumbnailCache thumbnailCache;
     juce::AudioFormatManager formatManager;
+    std::unique_ptr<juce::AudioFormatReaderSource> playSource;
+    juce::File myFile;
+    void transportStateChanged(TransportState newState);
     
     
     //load a TorchScript module:
