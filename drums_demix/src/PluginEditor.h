@@ -59,8 +59,10 @@ public:
     //VISUALIZER
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
     void thumbnailChanged();
+    
+    void displayOut(juce::File file, juce::AudioThumbnail& thumbnailOut);
 
-    void paintIfNoFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds);
+    void paintIfNoFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, at::string Phrase);
 
     void paintIfFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav);
 
@@ -110,19 +112,48 @@ private:
     juce::TextButton playButton;
     juce::TextButton stopButton;
     
+    juce::TextButton playKickButton;
+    juce::TextButton stopKickButton;
+    
+    juce::TextButton playSnareButton;
+    juce::TextButton stopSnareButton;
+    
+    juce::TextButton playTomsButton;
+    juce::TextButton stopTomsButton;
+    
+    juce::TextButton playHihatButton;
+    juce::TextButton stopHihatButton;
+    
+    juce::TextButton playCymbalsButton;
+    juce::TextButton stopCymbalsButton;
+    
     //VISUALIZER
+    
     juce::AudioThumbnail thumbnail;
     juce::AudioThumbnailCache thumbnailCache;
 
-    juce::AudioThumbnail thumbnailOut;
-    juce::AudioThumbnailCache thumbnailCacheOut;
+    juce::AudioThumbnail thumbnailKickOut;
+    juce::AudioThumbnailCache thumbnailCacheKickOut;
+    
+    juce::AudioThumbnail thumbnailSnareOut;
+    juce::AudioThumbnailCache thumbnailCacheSnareOut;
+    
+    juce::AudioThumbnail thumbnailTomsOut;
+    juce::AudioThumbnailCache thumbnailCacheTomsOut;
+    
+    juce::AudioThumbnail thumbnailHihatOut;
+    juce::AudioThumbnailCache thumbnailCacheHihatOut;
+    
+    juce::AudioThumbnail thumbnailCymbalsOut;
+    juce::AudioThumbnailCache thumbnailCacheCymbalsOut;
+    
+    //------------------------------------------------------------------------------------
     
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> playSource;
     juce::File myFile;
     juce::File myFileOut;
     void transportStateChanged(TransportState newState);
-    void displayOut(juce::File file);
 
     juce::AudioBuffer<float> bufferY;
     juce::AudioBuffer<float> bufferOut;
