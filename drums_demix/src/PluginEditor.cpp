@@ -66,12 +66,40 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
         
 
     try{
-        mymodule=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module.pt");
+        mymoduleKick=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
     
+
+    try{
+        mymoduleSnare=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+    }
+    catch(const c10::Error& e) {
+        DBG("error"); //indicate error to calling code
+    }
+
+    try{
+        mymoduleToms=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+    }
+    catch(const c10::Error& e) {
+        DBG("error"); //indicate error to calling code
+    }
+
+    try{
+        mymoduleHihat=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+    }
+    catch(const c10::Error& e) {
+        DBG("error"); //indicate error to calling code
+    }
+
+    try{
+        mymoduleCymbals=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_Cymbals.pt");
+    }
+    catch(const c10::Error& e) {
+        DBG("error"); //indicate error to calling code
+    }
 
 }
 
@@ -244,122 +272,33 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         //***INFER THE MODEL***
 
 
-        //-Forward
-        at::Tensor outputs = mymodule.forward(my_input).toTensor();
+        InferModels(my_input, stftFilePhase, fileTensor.sizes()[1]);
 
-        //-Need another dimension to do batch_istft
-        outputs = torch::squeeze(outputs, 0);
-        DBG("outputs sizes: ");
-        DBG(outputs.sizes()[0]);
-        DBG(outputs.sizes()[1]);
-        DBG(outputs.sizes()[2]);
-        //DBG(outputs.sizes()[3]);
-
-
-        //-Compute ISTFT
-
-        at::Tensor y = utils.batch_istft(outputs, stftFilePhase, fileTensor.sizes()[1]);
-
-        DBG("outputTensor sizes: ");
-        DBG(y.sizes()[0]);
-        DBG(y.sizes()[1]);
 
 
 
         //***CREATE A STEREO, AUDIBLE OUTPUT***
 
-        at::Tensor yOut = y.contiguous();
+        at::Tensor yOut = yKick.contiguous();
         std::vector<float> vectoryOutprova(yOut.data_ptr<float>(), yOut.data_ptr<float>() + yOut.numel());
-        vectoryOut2 = vectoryOutprova;
+        
 
-        for (int sample = 0; sample < vectoryOut2.size(); sample++)
+        for (int sample = 0; sample < vectoryOutprova.size(); sample++)
         {
             ///DBG(buffer[sample]);
-            vectoryOut.push_back(vectoryOut2[sample]);
+            vectoryOut.push_back(vectoryOutprova[sample]);
         }
 
-        //-Split output tensor in Left & Right
-        torch::autograd::variable_list ySplit = torch::split(y, 1);
-        at::Tensor yL = ySplit[0];
-        at::Tensor yR = ySplit[1];
+        // DECOMMENT IF USING ONLY THE KICK FOR QUICK DEBUGGING
+        CreateWavQuick(yKick);
 
+        // DECOMMENT IF USING ALL THE DRUMS
+        //std::vector<at::Tensor> tensorList = {yKick, ySnare, yToms, yHihat, yCymbals};
+        //CreateWav(tensorList);
 
-
-        DBG("yL sizes: ");
-        DBG(yL.sizes()[0]);
-        DBG(yL.sizes()[1]);
-
-        DBG("yR sizes: ");
-        DBG(yR.sizes()[0]);
-        DBG(yR.sizes()[1]);
-
-
-        //-Make a std vector for every channel (L & R)
-        yL = yL.contiguous();
-        std::vector<float> vectoryL(yL.data_ptr<float>(), yL.data_ptr<float>() + yL.numel());
-
-        yR = yR.contiguous();
-        std::vector<float> vectoryR(yR.data_ptr<float>(), yR.data_ptr<float>() + yR.numel());
-
-
-
-        //for (int sample = 0; sample < vectoryL.size(); sample++)
-        //{
-        //    ///DBG(buffer[sample]);
-        //    vectoryOut.push_back(vectoryL[sample]);
-        //}
-        DBG("pushbackFatto");
-        //vectoryOut = std::copy(vectoryL.);
-
-        //-Create an array of 2 float pointers from the 2 std vectors 
-        float* dataPtrs[2];
-        dataPtrs[0] = { vectoryL.data() };
-        dataPtrs[1] = { vectoryR.data() };
-
-        float* dataPtrsOut[2];
-        dataPtrsOut[0] = { vectoryOut.data() };
-        dataPtrsOut[1] = { vectoryOut.data() };
-
-
-        //-Create the stereo AudioBuffer
-        bufferY = juce::AudioBuffer<float>(dataPtrs, 2, y.sizes()[1]); //need to change last argument to let it be dynamic!
-        bufferOut = juce::AudioBuffer<float>(dataPtrsOut, 2, y.sizes()[1]);
-
-
-        //-Print Wav
-        myFileOut = juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/testWavJuce6.wav");
-        juce::WavAudioFormat formatWav;
-        std::unique_ptr<juce::AudioFormatWriter> writerY;
-        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(myFileOut),
-                                        44100.0,
-                                        bufferY.getNumChannels(),
-                                        16,
-                                        {},
-                                        0));
-        if (writerY != nullptr)
-        {
-            writerY->writeFromAudioSampleBuffer(bufferY, 0, bufferY.getNumSamples());
-            paintOut = true;
-            repaint();
-
-
-        }
-
-       
-
-        DBG("wav scritto!");
         
         
-        ////VISUALIZER
-
-
-        //displayOut(myFileOut);
-
-        //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-
-        //thumbnailOut.setSource(new juce::FileInputSource(myFileOut));
-        
-      
+     
         
 
 
@@ -560,4 +499,262 @@ void DrumsDemixEditor::loadFile(const juce::String& path)
     thumbnail.setSource(new juce::FileInputSource(file));
 
 }
+
+void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, torch::Tensor phase, int size) 
+{
+    DBG("Infering the Models...");
+    Utils utils = Utils::Utils();
+    //***INFER THE MODEL***
+
+
+        //-Forward
+        at::Tensor outputsKick = mymoduleKick.forward(my_input).toTensor();
+
+        // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
+        //at::Tensor outputsSnare = mymoduleSnare.forward(my_input).toTensor();
+        //at::Tensor outputsToms = mymoduleToms.forward(my_input).toTensor();
+        //at::Tensor outputsHihat = mymoduleHihat.forward(my_input).toTensor();
+        //at::Tensor outputsCymbals = mymoduleCymbals.forward(my_input).toTensor();
+
+        //-Need another dimension to do batch_istft
+        outputsKick = torch::squeeze(outputsKick, 0);
+
+        DBG("outputs sizes: ");
+        DBG(outputsKick.sizes()[0]);
+        DBG(outputsKick.sizes()[1]);
+        DBG(outputsKick.sizes()[2]);
+        //DBG(outputs.sizes()[3]);
+
+
+        // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
+        //outputsSnare = torch::squeeze(outputsSnare, 0);
+        //outputsToms = torch::squeeze(outputsToms, 0);
+        //outputsHihat = torch::squeeze(outputsHihat, 0);
+        //outputsCymbals = torch::squeeze(outputsCymbals, 0);
+        
+
+        //-Compute ISTFT
+
+        yKick = utils.batch_istft(outputsKick, phase, size);
+
+        DBG("y tensor sizes: ");
+        DBG(yKick.sizes()[0]);
+        DBG(yKick.sizes()[1]);
+
+
+        // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
+        
+        //ySnare = utils.batch_istft(outputsSnare, phase, size);
+        //yToms = utils.batch_istft(outputsToms, phase, size);
+        //yHihat = utils.batch_istft(outputsHihat, phase, size);
+        //yCymbals = utils.batch_istft(outputsCymbals, phase, size);
+        
+
+
+        /* RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
+
+        try {
+            mymoduleKick = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+        }
+        catch (const c10::Error& e) {
+            DBG("error"); //indicate error to calling code
+        }
+
+
+        try {
+            mymoduleSnare = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+        }
+        catch (const c10::Error& e) {
+            DBG("error"); //indicate error to calling code
+        }
+
+        try {
+            mymoduleToms = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+        }
+        catch (const c10::Error& e) {
+            DBG("error"); //indicate error to calling code
+        }
+
+        try {
+            mymoduleHihat = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+        }
+        catch (const c10::Error& e) {
+            DBG("error"); //indicate error to calling code
+        }
+
+        try {
+            mymoduleCymbals = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_Cymbals.pt");
+        }
+        catch (const c10::Error& e) {
+            DBG("error"); //indicate error to calling code
+        }
+
+        */
+
+}
+
+void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
+{
+    for(at::Tensor yInstr : tList) {
+
+        DBG("y sizes: ");
+        DBG(yInstr.sizes()[0]);
+        DBG(yInstr.sizes()[1]);
+
+
+         //-Split output tensor in Left & Right
+        torch::autograd::variable_list ySplit = torch::split(yInstr, 1);
+        at::Tensor yL = ySplit[0];
+        at::Tensor yR = ySplit[1];
+
+
+
+        //-Make a std vector for every channel (L & R)
+        yL = yL.contiguous();
+        std::vector<float> vectoryL(yL.data_ptr<float>(), yL.data_ptr<float>() + yL.numel());
+
+        yR = yR.contiguous();
+        std::vector<float> vectoryR(yR.data_ptr<float>(), yR.data_ptr<float>() + yR.numel());
+
+        //-Create an array of 2 float pointers from the 2 std vectors 
+        float* dataPtrs[2];
+        dataPtrs[0] = { vectoryL.data() };
+        dataPtrs[1] = { vectoryR.data() };
+
+
+        //-Create the stereo AudioBuffer
+        juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, yInstr.sizes()[1]); //need to change last argument to let it be dynamic!
+
+        //-Print Wav
+        juce::WavAudioFormat formatWav;
+        std::unique_ptr<juce::AudioFormatWriter> writerY;
+
+        if(torch::equal(yInstr, yKick)) {
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav")),
+                                        44100.0,
+                                        bufferY.getNumChannels(),
+                                        16,
+                                        {},
+                                        0));
+
+        }
+
+        else if(torch::equal(yInstr, ySnare)) {
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav")),
+                                        44100.0,
+                                        bufferY.getNumChannels(),
+                                        16,
+                                        {},
+                                        0));
+
+        }
+
+        else if(torch::equal(yInstr, yToms)){
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav")),
+                                        44100.0,
+                                        bufferY.getNumChannels(),
+                                        16,
+                                        {},
+                                        0));
+
+        }
+
+        else if(torch::equal(yInstr, yHihat)){
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav")),
+                                        44100.0,
+                                        bufferY.getNumChannels(),
+                                        16,
+                                        {},
+                                        0));
+
+        }
+
+        else if(torch::equal(yInstr, yCymbals)){
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav")),
+                                        44100.0,
+                                        bufferY.getNumChannels(),
+                                        16,
+                                        {},
+                                        0));
+
+        }
+
+
+        if (writerY != nullptr)
+            writerY->writeFromAudioSampleBuffer (bufferY, 0, bufferY.getNumSamples());
+
+       
+
+        DBG("wav scritto!");
+    }
+       
+
+}
+
+void DrumsDemixEditor::CreateWavQuick(torch::Tensor yKickTensor)
+{
+
+
+        DBG("y sizes: ");
+        DBG(yKickTensor.sizes()[0]);
+        DBG(yKickTensor.sizes()[1]);
+
+
+         //-Split output tensor in Left & Right
+        torch::autograd::variable_list ySplit = torch::split(yKickTensor, 1);
+        at::Tensor yL = ySplit[0];
+        at::Tensor yR = ySplit[1];
+
+
+
+        //-Make a std vector for every channel (L & R)
+        yL = yL.contiguous();
+        std::vector<float> vectoryL(yL.data_ptr<float>(), yL.data_ptr<float>() + yL.numel());
+
+        yR = yR.contiguous();
+        std::vector<float> vectoryR(yR.data_ptr<float>(), yR.data_ptr<float>() + yR.numel());
+
+        //-Create an array of 2 float pointers from the 2 std vectors 
+        float* dataPtrs[2];
+        dataPtrs[0] = { vectoryL.data() };
+        dataPtrs[1] = { vectoryR.data() };
+
+        float* dataPtrsOut[2];
+        dataPtrsOut[0] = { vectoryOut.data() };
+        dataPtrsOut[1] = { vectoryOut.data() };
+
+
+
+        //-Create the stereo AudioBuffer
+        juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, yKickTensor.sizes()[1]); //need to change last argument to let it be dynamic!
+        bufferOut = juce::AudioBuffer<float>(dataPtrsOut, 2, yKickTensor.sizes()[1]);
+
+        //-Print Wav
+        juce::WavAudioFormat formatWav;
+        std::unique_ptr<juce::AudioFormatWriter> writerY;
+
+        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav")),
+                                        44100.0,
+                                        bufferY.getNumChannels(),
+                                        16,
+                                        {},
+                                        0));
+
+        
+
+        if (writerY != nullptr){
+            writerY->writeFromAudioSampleBuffer (bufferY, 0, bufferY.getNumSamples());
+            paintOut = true;
+            repaint();
+        }
+
+       
+
+        DBG("wav scritto!");
+    
+       
+
+}
+
+
 

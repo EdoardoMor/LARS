@@ -59,13 +59,25 @@ public:
     //VISUALIZER
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
     void thumbnailChanged();
+
     void paintIfNoFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds);
+
     void paintIfFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav);
 
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
     void loadFile(const juce::String& path);
+
+    //void paintIfFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds);
+
+    //MODEL INFERENCE
+    void InferModels(std::vector<torch::jit::IValue> my_input, torch::Tensor phase, int size);
+
+    //CREATE WAV
+    
+    void CreateWavQuick(torch::Tensor yKickTensor); 
+    void CreateWav(std::vector<at::Tensor> tList);
     
 
 
@@ -124,8 +136,19 @@ private:
     bool paintOut{ false };
     
     
-    //load a TorchScript module:
-    torch::jit::script::Module mymodule;
+    //load TorchScript modules:
+    torch::jit::script::Module mymoduleKick;
+    torch::jit::script::Module mymoduleSnare;
+    torch::jit::script::Module mymoduleToms;
+    torch::jit::script::Module mymoduleHihat;
+    torch::jit::script::Module mymoduleCymbals;
+
+    //output tensors
+    at::Tensor yKick;
+    at::Tensor ySnare;
+    at::Tensor yToms;
+    at::Tensor yHihat;
+    at::Tensor yCymbals;
     
 
     // This reference is provided as a quick way for your editor to
