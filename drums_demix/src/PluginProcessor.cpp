@@ -105,6 +105,7 @@ void DrumsDemixProcessor::changeProgramName (int index, const juce::String& newN
 //==============================================================================
 void DrumsDemixProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    transportProcessor.prepareToPlay(samplesPerBlock, sampleRate);
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     carrDPhase = getDPhase(baseFrequency, getSampleRate());
@@ -146,69 +147,32 @@ bool DrumsDemixProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
 
 void DrumsDemixProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    //////////// 
-    // deal with MIDI 
-
-     // transfer any pending notes into the midi messages and 
-    // clear pending - these messages come from the addMidi function
-    // which the UI might call to send notes from the piano widget
-    if (midiToProcess.getNumEvents() > 0){
-      midiMessages.addEvents(midiToProcess, midiToProcess.getFirstEventTime(), midiToProcess.getLastEventTime()+1, 0);
-      midiToProcess.clear();
-    }
-
-    for (const auto metadata : midiMessages){
-        auto message = metadata.getMessage();
-        if (message.isNoteOn()){
-            ampTarget = ampMax;
-            baseFrequency = juce::MidiMessage::getMidiNoteInHertz(message.getNoteNumber());
-            break;
-        }
-        if (message.isNoteOff()){
-            ampTarget = 0;
-        }
-    }
-
-    /////////////
-    // end of deal with MIDI
-
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+
+    // In case we have more outputs than inputs, this code clears any output
+    // channels that didn't contain input data, (because these aren't
+    // guaranteed to be empty - they may contain garbage).
+    // This is here to avoid people getting screaming feedback
+    // when they first compile a plugin, but obviously you don't need to keep
+    // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // in case mod index changed
-    // update mod dphase 
-    modDPhase = getDPhase(baseFrequency*modIndex, getSampleRate());
-    double mod{0};// output of modulator
-    for (int channel = 0; channel < totalNumOutputChannels; ++channel){
-        if (channel == 0){
-            auto* channelData = buffer.getWritePointer (channel);
-            int numSamples = buffer.getNumSamples();
-            for (int sInd=0;sInd < numSamples; ++sInd){
-                // we compute carrDPhase every sample
-                // in FM synthesis
+    // This is the place where you'd normally do the guts of your plugin's
+    // audio processing...
+    // Make sure to reset the state if your inner loop is processing
+    // the samples and the outer loop is handling the channels.
+    // Alternatively, you can process the samples with the channels
+    // interleaved by keeping the same state.
+    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    {
+        auto* channelData = buffer.getWritePointer (channel);
 
-                // first deal with the output
-                // of the modulator
-                mod = std::sin(modPhase);
-                mod *= modDepth * baseFrequency; // scale it 
-                modPhase += modDPhase; 
-                // now add mod output
-                // to the base freq
-                // and compute phase change 
-                // on carrier 
-                carrDPhase = getDPhase(baseFrequency + mod, getSampleRate());
-                channelData[sInd] = (float) (std::sin(carrPhase) * amp);
-
-                carrPhase += carrDPhase;
-
-                if (amp > ampTarget) amp -= dAmp;
-                if (amp < ampTarget) amp += dAmp;
-            }
-        }
+        // ..do something to the data...
     }
+    transportProcessor.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer));
 
   
  

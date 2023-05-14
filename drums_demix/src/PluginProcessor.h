@@ -88,6 +88,8 @@ public:
     void addMidi(juce::MidiMessage msg, int sampleOffset);
     /** set env length in seconds*/
     void setEnvLength(double envLengthSecs);
+    
+    juce::AudioTransportSource transportProcessor;
 private:
     // double phase;
     // double dphase;
@@ -106,7 +108,7 @@ private:
     double amp;
     double ampTarget;
     double dAmp;  
-    double ampMax; 
+    double ampMax;
 
     double getDPhase(double freq, double sampleRate);
 

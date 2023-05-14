@@ -15,10 +15,12 @@
 #include <torch/torch.h>
 #include <torch/script.h>
 #include <cmath>
+#include <chrono>
+#include <thread>
 
 //==============================================================================
 DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
-    : AudioProcessorEditor (&p), miniPianoKbd{kbdState, juce::MidiKeyboardComponent::horizontalKeyboard}, formatManager(), thumbnailCache {5},thumbnail {512, formatManager, thumbnailCache},  audioProcessor (p)
+    : AudioProcessorEditor (&p), miniPianoKbd{kbdState, juce::MidiKeyboardComponent::horizontalKeyboard}, formatManager(), thumbnailCache {5},thumbnail {512, formatManager, thumbnailCache},thumbnailCacheOut {5},thumbnailOut {512, formatManager, thumbnailCacheOut},  audioProcessor (p), state(Stopped)
 
 {    
     // listen to the mini piano
@@ -26,7 +28,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (600, 500);
+    setSize (1000, 500);
 
     //addAndMakeVisible(envToggle);
     //envToggle.addListener(this);
@@ -35,7 +37,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     //addAndMakeVisible(miniPianoKbd);
 
     addAndMakeVisible(testButton);
-    testButton.setButtonText("TEST");
+    testButton.setButtonText("SEPARATE");
     testButton.setEnabled(false);
     testButton.addListener(this);
 
@@ -52,13 +54,15 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     stopButton.addListener(this);
 
     addAndMakeVisible(openButton);
-    openButton.setButtonText("OPEN");
+    openButton.setButtonText("LOAD A FILE");
     openButton.addListener(this);
 
     formatManager.registerBasicFormats();
+    audioProcessor.transportProcessor.addChangeListener(this);
     
     //VISUALIZER
     thumbnail.addChangeListener(this);
+    thumbnailOut.addChangeListener(this);    
         
 
     try{
@@ -76,22 +80,61 @@ DrumsDemixEditor::~DrumsDemixEditor()
 }
 
 //==============================================================================
-void DrumsDemixEditor::paint (juce::Graphics& g)
+void DrumsDemixEditor::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    g.setColour(juce::Colours::white);
+
+    if (paintOut)
+    {
+
+        juce::Path p;
+        auto ratio = bufferOut.getNumSamples() / getWidth();
+        const float* buffer = bufferOut.getReadPointer(0);
+        DBG("entrato");
+
+        for (int sample = 0; sample < bufferOut.getNumSamples(); sample += ratio)
+        {
+            DBG(buffer[sample]);
+            audioPoints.push_back(buffer[sample]);
+        }
+        DBG(audioPoints.size());
+
+        DBG("uscito");
+
+        p.startNewSubPath(10, (60 + ((getHeight() - 200) / 2) + ((getHeight() - 200) / 2) / 2));
+
+        for (int sample = 0; sample < audioPoints.size(); ++sample)
+        {
+            auto point = juce::jmap<float>(audioPoints[sample], -1.0f, 1.0f, (60 + (getHeight() - 200) / 2) + ((getHeight() - 200) / 2) / 2 + 100, (60 + (getHeight() - 200) / 2) + ((getHeight() - 200) / 2) / 2 - 100);
+            //auto point = juce::jmap<float>(audioPoints[sample], -1.0f, 1.0f, (20 + (getHeight() - 200) / 2) + ((getHeight() - 200) / 2) / 2 + (((getHeight() - 200) / 2)), (((getHeight() - 200) / 2) / 2) + 40);
+            p.lineTo(sample, point);
+
+        }
+
+        g.strokePath(p, juce::PathStrokeType(2));
+        paintOut = false;
+    }
 
    // g.setColour (juce::Colours::white);
    // g.setFont (15.0f);
    // g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
     
     //VISUALIZER
-    juce::Rectangle<int> thumbnailBounds (10, 10, getWidth() - 20, getHeight() - 150);
+    juce::Rectangle<int> thumbnailBounds (10, (getHeight() / 9)+10, getWidth() - 220, (getHeight() - 200)/4);
     
            if (thumbnail.getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBounds);
            else
-               paintIfFileLoaded (g, thumbnailBounds);
+               paintIfFileLoaded (g, thumbnailBounds, thumbnail);
+        
+    //juce::Rectangle<int> thumbnailBoundsOut (10, 20+(getHeight() - 200)/2, getWidth() - 20, (getHeight() - 200)/2);
+    //
+    //       if (thumbnailOut.getNumChannels() == 0)
+    //           paintIfNoFileLoaded (g, thumbnailBoundsOut);
+    //       else
+    //           paintIfFileLoaded (g, thumbnailBoundsOut, thumbnailOut);
     
 }
 
@@ -102,10 +145,10 @@ void DrumsDemixEditor::resized()
     float rowHeight = getHeight()/5; 
     //envToggle.setBounds(0, 0, getWidth()/2, rowHeight);
     //miniPianoKbd.setBounds(0, rowHeight * 3, getWidth(), rowHeight);
-    testButton.setBounds(getWidth()/2, rowHeight * 4, getWidth()/2, getHeight()/5);
-    openButton.setBounds(0, rowHeight * 4, getWidth()/2, getHeight()/5);
-    playButton.setBounds(0, rowHeight * 4-getHeight()/12, getWidth()/2, getHeight()/12);
-    stopButton.setBounds(getWidth()/2, rowHeight * 4-getHeight()/12, getWidth()/2, getHeight()/12);
+    testButton.setBounds(getWidth()/2,0, getWidth()/2, getHeight()/9);
+    openButton.setBounds(0,0, getWidth()/2, getHeight()/9);
+    playButton.setBounds(getWidth() - 220 +20, getHeight() / 9 +10, (getHeight() - 200) / 4, (getHeight() - 200) / 4);
+    stopButton.setBounds(getWidth() - 220 + 30 + (getHeight() - 200) / 4, getHeight() / 9 +10, (getHeight() - 200) / 4, (getHeight() - 200) / 4);
 
     
 }
@@ -137,7 +180,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         audioProcessor.setEnvLength(envLen);
     }
 
-    if (btn == &testButton){
+    if (btn == &testButton) {
 
 
         //***TAKE THE INPUT FROM THE MIXED DRUMS FILE***
@@ -211,7 +254,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         DBG(outputs.sizes()[1]);
         DBG(outputs.sizes()[2]);
         //DBG(outputs.sizes()[3]);
-        
+
 
         //-Compute ISTFT
 
@@ -221,15 +264,26 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         DBG(y.sizes()[0]);
         DBG(y.sizes()[1]);
 
+
+
         //***CREATE A STEREO, AUDIBLE OUTPUT***
 
+        at::Tensor yOut = y.contiguous();
+        std::vector<float> vectoryOutprova(yOut.data_ptr<float>(), yOut.data_ptr<float>() + yOut.numel());
+        vectoryOut2 = vectoryOutprova;
+
+        for (int sample = 0; sample < vectoryOut2.size(); sample++)
+        {
+            ///DBG(buffer[sample]);
+            vectoryOut.push_back(vectoryOut2[sample]);
+        }
 
         //-Split output tensor in Left & Right
         torch::autograd::variable_list ySplit = torch::split(y, 1);
         at::Tensor yL = ySplit[0];
         at::Tensor yR = ySplit[1];
 
-        
+
 
         DBG("yL sizes: ");
         DBG(yL.sizes()[0]);
@@ -247,33 +301,64 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         yR = yR.contiguous();
         std::vector<float> vectoryR(yR.data_ptr<float>(), yR.data_ptr<float>() + yR.numel());
 
+
+
+        //for (int sample = 0; sample < vectoryL.size(); sample++)
+        //{
+        //    ///DBG(buffer[sample]);
+        //    vectoryOut.push_back(vectoryL[sample]);
+        //}
+        DBG("pushbackFatto");
+        //vectoryOut = std::copy(vectoryL.);
+
         //-Create an array of 2 float pointers from the 2 std vectors 
         float* dataPtrs[2];
         dataPtrs[0] = { vectoryL.data() };
         dataPtrs[1] = { vectoryR.data() };
 
+        float* dataPtrsOut[2];
+        dataPtrsOut[0] = { vectoryOut.data() };
+        dataPtrsOut[1] = { vectoryOut.data() };
+
 
         //-Create the stereo AudioBuffer
-        juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, y.sizes()[1]); //need to change last argument to let it be dynamic!
+        bufferY = juce::AudioBuffer<float>(dataPtrs, 2, y.sizes()[1]); //need to change last argument to let it be dynamic!
+        bufferOut = juce::AudioBuffer<float>(dataPtrsOut, 2, y.sizes()[1]);
+
 
         //-Print Wav
+        myFileOut = juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/testWavJuce6.wav");
         juce::WavAudioFormat formatWav;
         std::unique_ptr<juce::AudioFormatWriter> writerY;
-        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/testWavJuce5.wav")),
+        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(myFileOut),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
                                         {},
                                         0));
         if (writerY != nullptr)
-            writerY->writeFromAudioSampleBuffer (bufferY, 0, bufferY.getNumSamples());
+        {
+            writerY->writeFromAudioSampleBuffer(bufferY, 0, bufferY.getNumSamples());
+            paintOut = true;
+            repaint();
+
+
+        }
 
        
 
         DBG("wav scritto!");
         
-        //VISUALIZER
-        thumbnail.setSource (new juce::FileInputSource (myFile));
+        
+        ////VISUALIZER
+
+
+        //displayOut(myFileOut);
+
+        //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+
+        //thumbnailOut.setSource(new juce::FileInputSource(myFileOut));
+        
       
         
 
@@ -294,8 +379,8 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
                 std::unique_ptr<juce::AudioFormatReaderSource> tempSource(new juce::AudioFormatReaderSource(reader, true));
 
-                //audioProcessor.transportProcessor.setSource(tempSource.get());
-                //transportStateChanged(Stopped);
+                audioProcessor.transportProcessor.setSource(tempSource.get());
+                transportStateChanged(Stopped);
 
                 playSource.reset(tempSource.release());
                 DBG("IFopenbuttonclicked");
@@ -308,18 +393,22 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
 
         }
+        //VISUALIZER
+        thumbnail.setSource(new juce::FileInputSource(myFile));
     }
     if (btn == &playButton){
+        transportStateChanged(Starting);
         DBG("playbuttonclicked");
-        playButton.setEnabled(false);
-        stopButton.setEnabled(true);
+        //playButton.setEnabled(false);
+        //stopButton.setEnabled(true);
         
 
     }
     if (btn == &stopButton){
+        transportStateChanged(Stopping);
         DBG("stopbuttonclicked");
-        playButton.setEnabled(true);
-        stopButton.setEnabled(false);
+        //playButton.setEnabled(true);
+        //stopButton.setEnabled(false);
 
     }
 
@@ -339,13 +428,61 @@ void DrumsDemixEditor::handleNoteOff(juce::MidiKeyboardState *source, int midiCh
     audioProcessor.addMidi(msg2, 0); 
 }
 
+void DrumsDemixEditor::transportStateChanged(TransportState newState)
+{
+  if(newState != state)
+  {
+    state = newState;
+
+    switch (state)
+    {
+    case Stopped:
+        audioProcessor.transportProcessor.setPosition(0.0);
+      break;
+    case Starting:
+      stopButton.setEnabled(true);
+      playButton.setEnabled(false);
+      audioProcessor.transportProcessor.start();
+      break;
+    case Playing:
+      stopButton.setEnabled(true);
+      break;
+    case Stopping:
+      stopButton.setEnabled(false);
+      playButton.setEnabled(true);
+      audioProcessor.transportProcessor.stop();
+      break;
+    }
+  }
+}
+
+void DrumsDemixEditor::displayOut(juce::File file)
+{
+    DBG(file.getFileName());
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+
+    thumbnailOut.setSource(new juce::FileInputSource(file));
+}
+
 
 
 
 //VISUALIZER
 void DrumsDemixEditor::changeListenerCallback (juce::ChangeBroadcaster* source)
   {
-      if (source == &thumbnail)       repaint();
+    if (source == &thumbnail) { repaint(); }
+    if (source == &thumbnailOut) { repaint(); }
+    if(source == &audioProcessor.transportProcessor)
+    {
+        if(audioProcessor.transportProcessor.isPlaying())
+        {
+        transportStateChanged(Playing);
+        }
+        else
+        {
+        transportStateChanged(Stopped);
+        }
+    }
   }
 
 void DrumsDemixEditor::paintIfNoFileLoaded (juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds)
@@ -353,20 +490,74 @@ void DrumsDemixEditor::paintIfNoFileLoaded (juce::Graphics& g, const juce::Recta
       g.setColour (juce::Colours::darkgrey);
       g.fillRect (thumbnailBounds);
       g.setColour (juce::Colours::white);
-      g.drawFittedText ("No File Loaded", thumbnailBounds, juce::Justification::centred, 1);
+      g.drawFittedText ("Drop a file or load it", thumbnailBounds, juce::Justification::centred, 1);
   }
 
-void DrumsDemixEditor::paintIfFileLoaded (juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds)
+void DrumsDemixEditor::paintIfFileLoaded (juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav)
  {
      g.setColour (juce::Colours::white);
      g.fillRect (thumbnailBounds);
 
      g.setColour (juce::Colours::red);                               // [8]
 
-     thumbnail.drawChannels (g,                                      // [9]
+     thumbnailWav.drawChannels (g,                                      // [9]
                              thumbnailBounds,
                              0.0,                                    // start time
-                             thumbnail.getTotalLength(),             // end time
+                             thumbnailWav.getTotalLength(),             // end time
                              1.0f);                                  // vertical zoom
  }
+
+bool DrumsDemixEditor::isInterestedInFileDrag(const juce::StringArray& files)
+{
+    for (auto file : files)
+    {
+        if (file.contains(".wav") || file.contains(".mp3") || file.contains(".aiff"))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void DrumsDemixEditor::filesDropped(const juce::StringArray& files, int x, int y)
+{
+    for (auto file : files)
+    {
+        if (isInterestedInFileDrag(files)) 
+        {
+            loadFile(file);
+
+        }
+    }
+    repaint();
+
+}
+
+void DrumsDemixEditor::loadFile(const juce::String& path)
+{
+
+
+    auto file = juce::File(path);
+    myFile = file;
+    juce::AudioFormatReader* reader = formatManager.createReaderFor(file);
+    if (reader != nullptr)
+    {
+
+        std::unique_ptr<juce::AudioFormatReaderSource> tempSource(new juce::AudioFormatReaderSource(reader, true));
+
+        audioProcessor.transportProcessor.setSource(tempSource.get());
+        transportStateChanged(Stopped);
+
+        playSource.reset(tempSource.release());
+        DBG("IFopenbuttonclicked");
+
+    }
+    DBG("openbuttonclicked");
+    testButton.setEnabled(true);
+    playButton.setEnabled(true);
+
+    thumbnail.setSource(new juce::FileInputSource(file));
+
+}
 
