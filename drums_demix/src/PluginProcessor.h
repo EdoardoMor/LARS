@@ -90,9 +90,23 @@ public:
     void setEnvLength(double envLengthSecs);
     
     juce::AudioTransportSource transportProcessor;
+    juce::AudioTransportSource transportProcessorKick;
+    juce::AudioTransportSource transportProcessorSnare;
+    juce::AudioTransportSource transportProcessorToms;
+    juce::AudioTransportSource transportProcessorHihat;
+    juce::AudioTransportSource transportProcessorCymbals;
+
+    bool playInput{ false };
+    bool playKick {false};
+    bool playSnare{ false };
+    bool playToms{ false };
+    bool playHihat{ false };
+    bool playCymbals{ false };
 private:
     // double phase;
     // double dphase;
+
+
     double baseFrequency;  
 
     double carrPhase;

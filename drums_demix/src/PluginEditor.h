@@ -151,9 +151,14 @@ private:
     
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> playSource;
+    std::unique_ptr<juce::AudioFormatReaderSource> playSourceKick;
+    std::unique_ptr<juce::AudioFormatReaderSource> playSourceSnare;
+    std::unique_ptr<juce::AudioFormatReaderSource> playSourceToms;
+    std::unique_ptr<juce::AudioFormatReaderSource> playSourceHihat;
+    std::unique_ptr<juce::AudioFormatReaderSource> playSourceCymbals;
     juce::File myFile;
     juce::File myFileOut;
-    void transportStateChanged(TransportState newState);
+    void transportStateChanged(TransportState newState, juce::String id);
 
     juce::AudioBuffer<float> bufferY;
     juce::AudioBuffer<float> bufferOut;
