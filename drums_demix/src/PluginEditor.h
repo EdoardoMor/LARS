@@ -61,6 +61,7 @@ public:
     void thumbnailChanged();
     
     void displayOut(juce::File file, juce::AudioThumbnail& thumbnailOut);
+    void DrumsDemixEditor::displayOut2(juce::AudioBuffer<float>& buffer, juce::AudioThumbnail& thumbnailOut);
 
     void paintIfNoFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, at::string Phrase);
 
@@ -185,6 +186,10 @@ private:
     at::Tensor yToms;
     at::Tensor yHihat;
     at::Tensor yCymbals;
+
+
+
+
     
 
     // This reference is provided as a quick way for your editor to

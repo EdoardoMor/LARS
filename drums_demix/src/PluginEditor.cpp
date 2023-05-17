@@ -806,13 +806,26 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
 }
 
 
-void DrumsDemixEditor::displayOut(juce::File file, juce::AudioThumbnail& thumbnailOut)
+//Display Out Giusta
+
+//void DrumsDemixEditor::displayOut(juce::File file, juce::AudioThumbnail& thumbnailOut)
+//{
+//    DBG(file.getFileName());
+//    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+//
+//    thumbnailOut.setSource(new juce::FileInputSource(file));
+//}
+
+void DrumsDemixEditor::displayOut2(juce::AudioBuffer<float>& buffer, juce::AudioThumbnail& thumbnailOut)
 {
-    DBG(file.getFileName());
+    //juce::MemoryAudioSource input(buffer, true, false);
     //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 
-    thumbnailOut.setSource(new juce::FileInputSource(file));
+    thumbnailOut.reset(buffer.getNumChannels(), 44100, buffer.getNumSamples());
+    thumbnailOut.addBlock(0, buffer, 0, buffer.getNumSamples());
 }
+
+
 
 
 //VISUALIZER
@@ -977,6 +990,7 @@ void DrumsDemixEditor::loadFile(const juce::String& path)
 
 void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, torch::Tensor phase, int size) 
 {
+    //c10::InferenceMode guard(true);
     DBG("Infering the Models...");
     Utils utils = Utils();
     //***INFER THE MODEL***
@@ -999,6 +1013,8 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         DBG(outputsKick.sizes()[1]);
         DBG(outputsKick.sizes()[2]);
         //DBG(outputs.sizes()[3]);
+
+
 
 
         // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
@@ -1026,10 +1042,10 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         
 
 
-        /* RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
+        /// RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
 
         try {
-            mymoduleKick = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+            mymoduleKick = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
@@ -1037,34 +1053,34 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
 
         try {
-            mymoduleSnare = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+            mymoduleSnare = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleToms = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+            mymoduleToms = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleHihat = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+            mymoduleHihat = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleCymbals = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_Cymbals.pt");
+            mymoduleCymbals = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_Cymbals.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
-        */
+        
 
 }
 
@@ -1111,10 +1127,29 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
                                         16,
                                         {},
                                         0));
+            if (writerY != nullptr)
+                writerY->writeFromAudioSampleBuffer(bufferY, 0, bufferY.getNumSamples());
 
-            if (writerY != nullptr) writerY->writeFromAudioSampleBuffer (bufferY, 0, bufferY.getNumSamples());
-            
-            displayOut(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav"), thumbnailKickOut);
+        else if(torch::equal(yInstr, ySnare)) {
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav")),
+                                        44100.0,
+                                        bufferY.getNumChannels(),
+                                        16,
+                                        {},
+                                        0));
+            displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav"), thumbnailSnareOut);
+        }
+
+        else if(torch::equal(yInstr, yToms)){
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav")),
+                                        44100.0,
+                                        bufferY.getNumChannels(),
+                                        16,
+                                        {},
+                                        0));
+            //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav"), thumbnailTomsOut);
+            displayOut2(bufferY,thumbnailKickOut);
+        }
 
             juce::AudioFormatReader* readerKick = formatManager.createReaderFor(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav"));
             std::unique_ptr<juce::AudioFormatReaderSource> tempSourceKick(new juce::AudioFormatReaderSource(readerKick, true));
@@ -1125,21 +1160,28 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
 
             playSourceKick.reset(tempSourceKick.release());
 
+
+            audioProcessor.transportProcessorKick.setSource(tempSourceKick.get());
+            transportStateChanged(Stopped, "kick");
+
+            playSourceKick.reset(tempSourceKick.release());
+
+            //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav"), thumbnailKickOut);
+
+            displayOut2(bufferY,thumbnailKickOut);
         }
 
         else if(torch::equal(yInstr, ySnare)) {
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
                                         {},
                                         0));
+            if (writerY != nullptr)
+                writerY->writeFromAudioSampleBuffer(bufferY, 0, bufferY.getNumSamples());
 
-            if (writerY != nullptr) writerY->writeFromAudioSampleBuffer (bufferY, 0, bufferY.getNumSamples());
-
-            displayOut(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav"), thumbnailSnareOut);
-
-            juce::AudioFormatReader* readerSnare = formatManager.createReaderFor(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav"));
+            juce::AudioFormatReader* readerSnare = formatManager.createReaderFor(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav"));
             std::unique_ptr<juce::AudioFormatReaderSource> tempSourceSnare(new juce::AudioFormatReaderSource(readerSnare, true));
 
 
@@ -1147,22 +1189,22 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             transportStateChanged(Stopped, "snare");
 
             playSourceSnare.reset(tempSourceSnare.release());
+            //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav"), thumbnailSnareOut);
+            displayOut2(bufferY, thumbnailSnareOut);
 
         }
 
         else if(torch::equal(yInstr, yToms)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
                                         {},
                                         0));
+            if (writerY != nullptr)
+                writerY->writeFromAudioSampleBuffer(bufferY, 0, bufferY.getNumSamples());
 
-            if (writerY != nullptr) writerY->writeFromAudioSampleBuffer (bufferY, 0, bufferY.getNumSamples());
-
-            displayOut(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav"), thumbnailTomsOut);
-
-            juce::AudioFormatReader* readerToms = formatManager.createReaderFor(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav"));
+            juce::AudioFormatReader* readerToms = formatManager.createReaderFor(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav"));
             std::unique_ptr<juce::AudioFormatReaderSource> tempSourceToms(new juce::AudioFormatReaderSource(readerToms, true));
 
 
@@ -1171,21 +1213,22 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
 
             playSourceToms.reset(tempSourceToms.release());
 
+            //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav"), thumbnailTomsOut);
+            displayOut2(bufferY, thumbnailTomsOut);
         }
 
         else if(torch::equal(yInstr, yHihat)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
                                         {},
                                         0));
 
-            if (writerY != nullptr) writerY->writeFromAudioSampleBuffer (bufferY, 0, bufferY.getNumSamples());
+            if (writerY != nullptr)
+                writerY->writeFromAudioSampleBuffer(bufferY, 0, bufferY.getNumSamples());
 
-            displayOut(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav"), thumbnailHihatOut);
-
-            juce::AudioFormatReader* readerHihat = formatManager.createReaderFor(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav"));
+            juce::AudioFormatReader* readerHihat = formatManager.createReaderFor(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav"));
             std::unique_ptr<juce::AudioFormatReaderSource> tempSourceHihat(new juce::AudioFormatReaderSource(readerHihat, true));
 
 
@@ -1193,24 +1236,21 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             transportStateChanged(Stopped, "hihat");
 
             playSourceHihat.reset(tempSourceHihat.release());
-
+            //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav"), thumbnailHihatOut);
+            displayOut2(bufferY, thumbnailHihatOut);
         }
 
         else if(torch::equal(yInstr, yCymbals)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
                                         {},
                                         0));
+            if (writerY != nullptr)
+                writerY->writeFromAudioSampleBuffer(bufferY, 0, bufferY.getNumSamples());
 
-            if (writerY != nullptr) writerY->writeFromAudioSampleBuffer (bufferY, 0, bufferY.getNumSamples());
-
-            displayOut(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav"), thumbnailCymbalsOut);
-
-            
-
-            juce::AudioFormatReader* readerCymbals = formatManager.createReaderFor(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav"));
+            juce::AudioFormatReader* readerCymbals = formatManager.createReaderFor(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav"));
             std::unique_ptr<juce::AudioFormatReaderSource> tempSourceCymbals(new juce::AudioFormatReaderSource(readerCymbals, true));
 
 
@@ -1219,14 +1259,17 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
 
             playSourceCymbals.reset(tempSourceCymbals.release());
 
-
+            //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav"), thumbnailCymbalsOut);
+            displayOut2(bufferY, thumbnailCymbalsOut);
 
         }
+
+
+
 
        
 
         DBG("wav scritto!");
-
 
     }
        
@@ -1272,7 +1315,6 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yKickTensor)
 
         //-Create the stereo AudioBuffer
         juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, yKickTensor.sizes()[1]); //need to change last argument to let it be dynamic!
-
         //bufferOut = juce::AudioBuffer<float>(dataPtrsOut, 2, yKickTensor.sizes()[1]);
 
         //-Print Wav
