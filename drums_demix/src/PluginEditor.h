@@ -61,7 +61,7 @@ public:
     void thumbnailChanged();
     
     void displayOut(juce::File file, juce::AudioThumbnail& thumbnailOut);
-    void DrumsDemixEditor::displayOut2(juce::AudioBuffer<float>& buffer, juce::AudioThumbnail& thumbnailOut);
+    void displayOut2(juce::AudioBuffer<float>& buffer, juce::AudioThumbnail& thumbnailOut);
 
     void paintIfNoFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, at::string Phrase);
 
@@ -152,11 +152,11 @@ private:
     
     juce::AudioFormatManager formatManager;
     std::unique_ptr<juce::AudioFormatReaderSource> playSource;
-    std::unique_ptr<juce::AudioFormatReaderSource> playSourceKick;
-    std::unique_ptr<juce::AudioFormatReaderSource> playSourceSnare;
-    std::unique_ptr<juce::AudioFormatReaderSource> playSourceToms;
-    std::unique_ptr<juce::AudioFormatReaderSource> playSourceHihat;
-    std::unique_ptr<juce::AudioFormatReaderSource> playSourceCymbals;
+    std::unique_ptr<juce::MemoryAudioSource> playSourceKick;
+    std::unique_ptr<juce::MemoryAudioSource> playSourceSnare;
+    std::unique_ptr<juce::MemoryAudioSource> playSourceToms;
+    std::unique_ptr<juce::MemoryAudioSource> playSourceHihat;
+    std::unique_ptr<juce::MemoryAudioSource> playSourceCymbals;
     juce::File myFile;
     juce::File myFileOut;
     void transportStateChanged(TransportState newState, juce::String id);
@@ -165,8 +165,6 @@ private:
     juce::AudioBuffer<float> bufferOut;
 
     std::vector<float> audioPoints;
-    std::vector<float> vectoryOut;
-    std::vector<float> vectoryOut2;
     
 
     //audioPoints.call_back(new float (args));

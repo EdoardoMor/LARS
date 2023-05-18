@@ -111,6 +111,9 @@ void DrumsDemixProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     if (playToms) { transportProcessorToms.prepareToPlay(samplesPerBlock, sampleRate); }
     if (playHihat) { transportProcessorHihat.prepareToPlay(samplesPerBlock, sampleRate); }
     if (playCymbals) { transportProcessorCymbals.prepareToPlay(samplesPerBlock, sampleRate); }
+
+
+
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     carrDPhase = getDPhase(baseFrequency, getSampleRate());
@@ -179,8 +182,8 @@ void DrumsDemixProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     }
     //transportProcessor.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer));
 
-    if(playInput) { transportProcessor.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
-    if(playKick) { transportProcessorKick.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
+    if (playInput) { transportProcessor.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
+    if (playKick) { transportProcessorKick.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
     if (playSnare) { transportProcessorSnare.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
     if (playToms) { transportProcessorToms.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
     if (playHihat) { transportProcessorHihat.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
