@@ -21,10 +21,14 @@
 
 #include "PluginProcessor.h"
 #include "NeuralNetwork.h"
+#include "ClickableArea.h"
 
 //==============================================================================
 /**
 */
+
+
+
 class DrumsDemixEditor  :   public juce::AudioProcessorEditor,
                           // listen to buttons
                           public juce::Button::Listener, 
@@ -81,6 +85,10 @@ public:
     
     void CreateWavQuick(torch::Tensor yKickTensor); 
     void CreateWav(std::vector<at::Tensor> tList);
+
+    // CLICKABLE AREAS
+
+    //void mouseDoubleClick(const juce::MouseEvent& event) override;
     
 
 
@@ -107,7 +115,7 @@ private:
     juce::MidiKeyboardState kbdState;
     juce::MidiKeyboardComponent miniPianoKbd; 
 
-    //the test button
+    //buttons
     juce::TextButton testButton;
     juce::TextButton openButton;
     juce::TextButton playButton;
@@ -127,6 +135,16 @@ private:
     
     juce::TextButton playCymbalsButton;
     juce::TextButton stopCymbalsButton;
+
+    ClickableArea areaKick;
+    ClickableArea areaSnare;
+    ClickableArea areaToms;
+    ClickableArea areaHihat;
+    ClickableArea areaCymbals;
+
+    ClickableArea areaFull;
+
+
     
     //VISUALIZER
     
@@ -197,3 +215,5 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrumsDemixEditor)
 };
+
+

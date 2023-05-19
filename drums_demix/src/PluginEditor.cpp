@@ -23,7 +23,8 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     : AudioProcessorEditor (&p), miniPianoKbd{kbdState, juce::MidiKeyboardComponent::horizontalKeyboard}, formatManager(), thumbnailCache {5},thumbnail {512, formatManager, thumbnailCache}, thumbnailCacheKickOut {5},thumbnailKickOut {512, formatManager, thumbnailCacheKickOut}, thumbnailCacheSnareOut {5},thumbnailSnareOut {512, formatManager, thumbnailCacheSnareOut},
         thumbnailCacheTomsOut {5},thumbnailTomsOut {512, formatManager, thumbnailCacheTomsOut},
         thumbnailCacheHihatOut {5},thumbnailHihatOut {512, formatManager, thumbnailCacheHihatOut},
-        thumbnailCacheCymbalsOut {5},thumbnailCymbalsOut {512, formatManager, thumbnailCacheCymbalsOut}, audioProcessor (p), state(Stopped)
+    thumbnailCacheCymbalsOut{ 5 }, thumbnailCymbalsOut{ 512, formatManager, thumbnailCacheCymbalsOut }, audioProcessor(p), state(Stopped),
+    areaKick{}, areaSnare{}, areaToms{}, areaHihat{}, areaCymbals{}, areaFull{}
 
 {    
     // listen to the mini piano
@@ -55,6 +56,12 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     stopButton.setEnabled(false);
     stopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopButton.addListener(this);
+
+    //FULL DRUMS
+    addAndMakeVisible(areaFull);
+    areaFull.addListener(this);
+    areaFull.setAlpha(0);
+    areaFull.setName("areaFull");
       
     //KICK
     addAndMakeVisible(playKickButton);
@@ -68,6 +75,11 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     stopKickButton.setEnabled(false);
     stopKickButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopKickButton.addListener(this);
+
+    addAndMakeVisible(areaKick);
+    areaKick.addListener(this);
+    areaKick.setAlpha(0);
+    areaKick.setName("areaKick");
        
     //SNARE
     addAndMakeVisible(playSnareButton);
@@ -81,6 +93,11 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     stopSnareButton.setEnabled(false);
     stopSnareButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopSnareButton.addListener(this);
+
+    addAndMakeVisible(areaSnare);
+    areaSnare.addListener(this);
+    areaSnare.setAlpha(0);
+    areaSnare.setName("areaSnare");
      
     //TOMS
     addAndMakeVisible(playTomsButton);
@@ -95,6 +112,11 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     stopTomsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopTomsButton.addListener(this);
 
+    addAndMakeVisible(areaToms);
+    areaToms.addListener(this);
+    areaToms.setAlpha(0);
+    areaToms.setName("areaToms");
+
     //HIHAT
     addAndMakeVisible(playHihatButton);
     playHihatButton.setButtonText("PLAY");
@@ -107,6 +129,11 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     stopHihatButton.setEnabled(false);
     stopHihatButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopHihatButton.addListener(this);
+
+    addAndMakeVisible(areaHihat);
+    areaHihat.addListener(this);
+    areaHihat.setAlpha(0);
+    areaHihat.setName("areaHihat");
             
     //CYMBALS
     addAndMakeVisible(playCymbalsButton);
@@ -120,6 +147,11 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     stopCymbalsButton.setEnabled(false);
     stopCymbalsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopCymbalsButton.addListener(this);
+
+    addAndMakeVisible(areaCymbals);
+    areaCymbals.addListener(this);
+    areaCymbals.setAlpha(0);
+    areaCymbals.setName("areaCymbals");
             
     addAndMakeVisible(openButton);
     openButton.setButtonText("LOAD A FILE");
@@ -228,6 +260,8 @@ void DrumsDemixEditor::paint(juce::Graphics& g)
     
     //VISUALIZER
 
+    //N.B: getWidth() - 220 = 780
+
     int thumbnailHeight = (getHeight() - 200) / 5;
     int thumbnailStartPoint = (getHeight() / 9) + 10;
     juce::Rectangle<int> thumbnailBounds (10, (getHeight() / 9)+10, getWidth() - 220, thumbnailHeight);
@@ -294,18 +328,25 @@ void DrumsDemixEditor::resized()
 
     playKickButton.setBounds(getWidth() - 220 +20, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
     stopKickButton.setBounds(getWidth() - 220 + 20 + (getHeight() - 200) / 4, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
+    areaKick.setBounds(10,10+ thumbnailStartPoint + thumbnailHeight, getWidth() - 220, thumbnailHeight);
 
     playSnareButton.setBounds(getWidth() - 220 +20, 20 + thumbnailStartPoint + thumbnailHeight*2, buttonHeight, buttonHeight);
     stopSnareButton.setBounds(getWidth() - 220 + 20 + (getHeight() - 200) / 4, 20 + thumbnailStartPoint + thumbnailHeight * 2, buttonHeight, buttonHeight);
+    areaSnare.setBounds(10, 20 + thumbnailStartPoint + thumbnailHeight * 2, getWidth() - 220, thumbnailHeight);
 
     playTomsButton.setBounds(getWidth() - 220 +20, 30 + thumbnailStartPoint + thumbnailHeight*3, buttonHeight, buttonHeight);
     stopTomsButton.setBounds(getWidth() - 220 + 20 + (getHeight() - 200) / 4, 30 + thumbnailStartPoint + thumbnailHeight * 3, buttonHeight, buttonHeight);
+    areaToms.setBounds(10, 30 + thumbnailStartPoint + thumbnailHeight * 3, getWidth() - 220, thumbnailHeight);
 
     playHihatButton.setBounds(getWidth() - 220 +20, 40 + thumbnailStartPoint + thumbnailHeight*4, buttonHeight, buttonHeight);
     stopHihatButton.setBounds(getWidth() - 220 + 20 + (getHeight() - 200) / 4, 40 + thumbnailStartPoint + thumbnailHeight * 4, buttonHeight, buttonHeight);
+    areaHihat.setBounds(10, 40 + thumbnailStartPoint + thumbnailHeight * 4, getWidth() - 220, thumbnailHeight);
 
     playCymbalsButton.setBounds(getWidth() - 220 +20, 50 + thumbnailStartPoint + thumbnailHeight*5, buttonHeight, buttonHeight);
     stopCymbalsButton.setBounds(getWidth() - 220 + 20 + (getHeight() - 200) / 4, 50 + thumbnailStartPoint + thumbnailHeight * 5, buttonHeight, buttonHeight);
+    areaCymbals.setBounds(10, 50 + thumbnailStartPoint + thumbnailHeight * 5, getWidth() - 220, thumbnailHeight);
+
+    areaFull.setBounds(10, (getHeight() / 9) + 10, getWidth() - 220, thumbnailHeight);
 }
 
  void DrumsDemixEditor::sliderValueChanged (juce::Slider *slider)
@@ -439,7 +480,10 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
                 audioProcessor.transportProcessor.setSource(tempSource.get());
                 transportStateChanged(Stopped, "input");
 
-                playSource.reset(tempSource.release());
+                playSource.reset(tempSource.get());
+                areaFull.setSrc(tempSource.release());
+
+
                 DBG("IFopenbuttonclicked");
 
             }
@@ -594,6 +638,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
 
 }
+
 
 void DrumsDemixEditor::handleNoteOn(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity)
 {
@@ -986,10 +1031,10 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         at::Tensor outputsKick = mymoduleKick.forward(my_input).toTensor();
 
         // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
-        at::Tensor outputsSnare = mymoduleSnare.forward(my_input).toTensor();
-        at::Tensor outputsToms = mymoduleToms.forward(my_input).toTensor();
-        at::Tensor outputsHihat = mymoduleHihat.forward(my_input).toTensor();
-        at::Tensor outputsCymbals = mymoduleCymbals.forward(my_input).toTensor();
+         at::Tensor outputsSnare = mymoduleSnare.forward(my_input).toTensor();
+         at::Tensor outputsToms = mymoduleToms.forward(my_input).toTensor();
+         at::Tensor outputsHihat = mymoduleHihat.forward(my_input).toTensor();
+         at::Tensor outputsCymbals = mymoduleCymbals.forward(my_input).toTensor();
 
         //-Need another dimension to do batch_istft
         outputsKick = torch::squeeze(outputsKick, 0);
@@ -1004,10 +1049,10 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
 
         // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
-        outputsSnare = torch::squeeze(outputsSnare, 0);
-        outputsToms = torch::squeeze(outputsToms, 0);
-        outputsHihat = torch::squeeze(outputsHihat, 0);
-        outputsCymbals = torch::squeeze(outputsCymbals, 0);
+         outputsSnare = torch::squeeze(outputsSnare, 0);
+         outputsToms = torch::squeeze(outputsToms, 0);
+         outputsHihat = torch::squeeze(outputsHihat, 0);
+         outputsCymbals = torch::squeeze(outputsCymbals, 0);
         
 
         //-Compute ISTFT
@@ -1021,10 +1066,10 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
         // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
         
-        ySnare = utils.batch_istft(outputsSnare, phase, size);
-        yToms = utils.batch_istft(outputsToms, phase, size);
-        yHihat = utils.batch_istft(outputsHihat, phase, size);
-        yCymbals = utils.batch_istft(outputsCymbals, phase, size);
+         ySnare = utils.batch_istft(outputsSnare, phase, size);
+         yToms = utils.batch_istft(outputsToms, phase, size);
+         yHihat = utils.batch_istft(outputsHihat, phase, size);
+         yCymbals = utils.batch_istft(outputsCymbals, phase, size);
         
 
 
@@ -1124,7 +1169,10 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             audioProcessor.transportProcessorKick.setSource(memSourcePtr.get());
             transportStateChanged(Stopped, "kick");
 
-            playSourceKick.reset(memSourcePtr.release());
+            playSourceKick.reset(memSourcePtr.get());
+            areaKick.setSrcInst(memSourcePtr.release());
+
+            
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav"), thumbnailKickOut);
 
@@ -1145,7 +1193,10 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             audioProcessor.transportProcessorSnare.setSource(memSourcePtr.get());
             transportStateChanged(Stopped, "snare");
 
-            playSourceSnare.reset(memSourcePtr.release());
+            playSourceSnare.reset(memSourcePtr.get());
+            areaSnare.setSrcInst(memSourcePtr.release());
+
+
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav"), thumbnailSnareOut);
             displayOut2(bufferY, thumbnailSnareOut);
 
@@ -1165,7 +1216,9 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             audioProcessor.transportProcessorToms.setSource(memSourcePtr.get());
             transportStateChanged(Stopped, "tom");
 
-            playSourceToms.reset(memSourcePtr.release());
+
+            playSourceToms.reset(memSourcePtr.get());
+            areaToms.setSrcInst(memSourcePtr.release());
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav"), thumbnailTomsOut);
             displayOut2(bufferY, thumbnailTomsOut);
@@ -1186,7 +1239,11 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             audioProcessor.transportProcessorHihat.setSource(memSourcePtr.get());
             transportStateChanged(Stopped, "hihat");
 
-            playSourceHihat.reset(memSourcePtr.release());
+
+            playSourceHihat.reset(memSourcePtr.get());
+            areaHihat.setSrcInst(memSourcePtr.release());
+
+
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav"), thumbnailHihatOut);
             displayOut2(bufferY, thumbnailHihatOut);
         }
@@ -1205,7 +1262,9 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             audioProcessor.transportProcessorCymbals.setSource(memSourcePtr.get());
             transportStateChanged(Stopped, "cymbals");
 
-            playSourceCymbals.reset(memSourcePtr.release());
+
+            playSourceCymbals.reset(memSourcePtr.get());
+            areaCymbals.setSrcInst(memSourcePtr.release());
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav"), thumbnailCymbalsOut);
             displayOut2(bufferY, thumbnailCymbalsOut);
@@ -1274,7 +1333,9 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yKickTensor)
             audioProcessor.transportProcessorKick.setSource(memSourcePtr.get());
             transportStateChanged(Stopped, "kick");
 
-            playSourceKick.reset(memSourcePtr.release());
+
+            playSourceKick.reset(memSourcePtr.get());
+            areaKick.setSrcInst(memSourcePtr.release());
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav"), thumbnailKickOut);
 
@@ -1286,6 +1347,4 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yKickTensor)
        
 
 }
-
-
 
