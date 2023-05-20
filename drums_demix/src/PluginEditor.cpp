@@ -1007,7 +1007,8 @@ void DrumsDemixEditor::loadFile(const juce::String& path)
         audioProcessor.transportProcessor.setSource(tempSource.get());
         transportStateChanged(Stopped, "input");
 
-        playSource.reset(tempSource.release());
+        playSource.reset(tempSource.get());
+        areaFull.setSrc(tempSource.release());
         DBG("IFopenbuttonclicked");
 
     }
