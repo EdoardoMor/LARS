@@ -38,7 +38,8 @@ class DrumsDemixEditor  :   public juce::AudioProcessorEditor,
                           private juce::MidiKeyboardState::Listener,
                           // listen to AudioThumbnail
                           public juce::ChangeListener,
-                          public juce::FileDragAndDropTarget
+                          public juce::FileDragAndDropTarget,
+                          private juce::Timer
                           
 
 {
@@ -89,6 +90,16 @@ public:
     // CLICKABLE AREAS
 
     //void mouseDoubleClick(const juce::MouseEvent& event) override;
+
+    //void mouseDrag(const juce::MouseEvent& e) override
+    //{
+    //    if (e.x >= 10 && e.x<= 10 + getWidth() - 220)
+    //    {
+    //        juce::StringArray pathKick = "C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav";
+    //        kickContainer.performExternalDragDropOfFiles(pathKick, true);
+    //    }
+    //}
+
     
 
 
@@ -165,6 +176,7 @@ private:
     
     juce::AudioThumbnail thumbnailCymbalsOut;
     juce::AudioThumbnailCache thumbnailCacheCymbalsOut;
+
     
     //------------------------------------------------------------------------------------
     
@@ -187,6 +199,11 @@ private:
 
     //audioPoints.call_back(new float (args));
     bool paintOut{ false };
+
+    void timerCallback() override
+    {
+        repaint();
+    }
     
     
     //load TorchScript modules:
@@ -203,6 +220,8 @@ private:
     at::Tensor yHihat;
     at::Tensor yCymbals;
 
+
+    //juce::DragAndDropContainer kickContainer;
 
 
 

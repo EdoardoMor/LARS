@@ -172,10 +172,14 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     thumbnailTomsOut.addChangeListener(this);
     thumbnailHihatOut.addChangeListener(this);
     thumbnailCymbalsOut.addChangeListener(this);
+
+    
+
+
         
 
     try{
-        mymoduleKick=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+        mymoduleKick=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt"); 
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -183,32 +187,35 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     
 
     try{
-        mymoduleSnare=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+        mymoduleSnare=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleToms=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+        mymoduleToms=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleHihat=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+        mymoduleHihat=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleCymbals=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
+        mymoduleCymbals=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
+    startTimer(40);
+
+
 
 }
 
@@ -953,16 +960,59 @@ void DrumsDemixEditor::paintIfNoFileLoaded (juce::Graphics& g, const juce::Recta
 
 void DrumsDemixEditor::paintIfFileLoaded (juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav)
  {
+    float thumbnailHeight = (getHeight() - 200) / 5;
+    float thumbnailStartPoint = (getHeight() / 9) + 10;
      g.setColour (juce::Colours::white);
      g.fillRect (thumbnailBounds);
 
      g.setColour (juce::Colours::red);                               // [8]
+     auto audioLength = (float)thumbnailWav.getTotalLength();
 
      thumbnailWav.drawChannels (g,                                      // [9]
                              thumbnailBounds,
                              0.0,                                    // start time
                              thumbnailWav.getTotalLength(),             // end time
-                             1.0f);                                  // vertical zoom
+                             1.0f);  // vertical zoom
+
+     g.setColour(juce::Colours::green);
+
+     if (audioProcessor.playInput) {
+         auto audioPosition = (float)audioProcessor.transportProcessor.getCurrentPosition();
+         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+         g.drawLine(drawPosition, (float)(getHeight() / 9) + 10, drawPosition,
+             (float)(getHeight() / 9) + 10 + thumbnailHeight, 1.0f);
+     }
+     if (audioProcessor.playKick) {
+         auto audioPosition = (float)audioProcessor.transportProcessorKick.getCurrentPosition();
+         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+         g.drawLine(drawPosition, (float)10 + thumbnailStartPoint + thumbnailHeight, drawPosition,
+             (float)10 + thumbnailStartPoint + thumbnailHeight +thumbnailHeight, 1.0f);
+     }
+     if (audioProcessor.playSnare) {
+         auto audioPosition = (float)audioProcessor.transportProcessorSnare.getCurrentPosition();
+         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+         g.drawLine(drawPosition, (float)20 + thumbnailStartPoint + thumbnailHeight * 2, drawPosition,
+             (float)20 + thumbnailStartPoint + thumbnailHeight * 2 +thumbnailHeight, 1.0f);
+     }
+     if (audioProcessor.playToms) {
+         auto audioPosition = (float)audioProcessor.transportProcessorToms.getCurrentPosition();
+         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+         g.drawLine(drawPosition, (float)30 + thumbnailStartPoint + thumbnailHeight * 3, drawPosition,
+             (float)30 + thumbnailStartPoint + thumbnailHeight * 3 +thumbnailHeight, 1.0f);
+     }
+     if (audioProcessor.playHihat) {
+         auto audioPosition = (float)audioProcessor.transportProcessorHihat.getCurrentPosition();
+         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+         g.drawLine(drawPosition, (float)40 + thumbnailStartPoint + thumbnailHeight * 4, drawPosition,
+             (float)40 + thumbnailStartPoint + thumbnailHeight * 4 + thumbnailHeight, 1.0f);
+     }
+     if (audioProcessor.playCymbals) {
+         auto audioPosition = (float)audioProcessor.transportProcessorCymbals.getCurrentPosition();
+         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+         g.drawLine(drawPosition, (float)50 + thumbnailStartPoint + thumbnailHeight * 5, drawPosition,
+             (float)50 + thumbnailStartPoint + thumbnailHeight * 5 + thumbnailHeight, 1.0f);
+     }
+
  }
 
 bool DrumsDemixEditor::isInterestedInFileDrag(const juce::StringArray& files)
@@ -1077,7 +1127,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         /// RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
 
         try {
-            mymoduleKick = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+            mymoduleKick = torch::jit::load("../src/scripted_modules/my_scripted_module_kick.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
@@ -1085,28 +1135,28 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
 
         try {
-            mymoduleSnare = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+            mymoduleSnare = torch::jit::load("../src/scripted_modules/my_scripted_module_snare.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleToms = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+            mymoduleToms = torch::jit::load("../src/scripted_modules/my_scripted_module_toms.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleHihat = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+            mymoduleHihat = torch::jit::load("../src/scripted_modules/my_scripted_module_hihat.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleCymbals = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_Cymbals.pt");
+            mymoduleCymbals = torch::jit::load("../src/scripted_modules/my_scripted_module_Cymbals.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
@@ -1156,7 +1206,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         std::unique_ptr<juce::AudioFormatWriter> writerY;
 
         if(torch::equal(yInstr, yKick)) {
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1181,7 +1231,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         }
 
         else if(torch::equal(yInstr, ySnare)) {
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1204,7 +1254,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         }
 
         else if(torch::equal(yInstr, yToms)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1226,7 +1276,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         }
 
         else if(torch::equal(yInstr, yHihat)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1250,7 +1300,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         }
 
         else if(torch::equal(yInstr, yCymbals)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,

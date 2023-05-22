@@ -45,7 +45,41 @@ public:
     }
 
 
+    
+    void mouseDrag(const juce::MouseEvent& e) override
+    {
+        if ((e.eventComponent)->getName() == "areaKick")
+        {
+            juce::StringArray path = "C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav";
+            Container.performExternalDragDropOfFiles(path, true);
+        }
+        if ((e.eventComponent)->getName() == "areaSnare")
+        {
+            juce::StringArray path = "C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav";
+            Container.performExternalDragDropOfFiles(path, true);
+        }
+        if ((e.eventComponent)->getName() == "areaToms")
+        {
+            juce::StringArray path = "C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav";
+            Container.performExternalDragDropOfFiles(path, true);
+        }
+        if ((e.eventComponent)->getName() == "areaHihat")
+        {
+            juce::StringArray path = "C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav";
+            Container.performExternalDragDropOfFiles(path, true);
+        }
+        if ((e.eventComponent)->getName() == "areaCymbals")
+        {
+            juce::StringArray path = "C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav";
+            Container.performExternalDragDropOfFiles(path, true);
+        }
+    }
+
+
 private:
+    juce::DragAndDropContainer Container;
+
+
 
     juce::MemoryAudioSource* srcInst;
     juce::AudioFormatReaderSource* srcFull;
