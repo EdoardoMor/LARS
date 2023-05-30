@@ -21,18 +21,6 @@ DrumsDemixProcessor::DrumsDemixProcessor()
                      #endif
                        )
 #endif
-,  baseFrequency{440}, 
-     carrPhase{0}, 
-     carrDPhase{0}, 
-
-     //modFreq{0}, 
-     modPhase{0}, 
-     modDPhase{0}, 
-    
-     modIndex{1}, 
-     modDepth{0}, 
-    
-   amp{0}, ampTarget{0}, dAmp{0.00001}, ampMax{0.25}
 {
 }
 
@@ -116,8 +104,6 @@ void DrumsDemixProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    carrDPhase = getDPhase(baseFrequency, getSampleRate());
-    modDPhase = getDPhase(baseFrequency*modIndex, getSampleRate());
 
 }
 
@@ -225,39 +211,6 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new DrumsDemixProcessor();
 }
 
-double DrumsDemixProcessor::getDPhase(double freq, double sampleRate)
-{
-    double two_pi = 3.1415927 * 2;
-    return (two_pi / sampleRate) * freq;   
-}
-void DrumsDemixProcessor::updateFrequency(double newFreq)
-{
-    baseFrequency = newFreq; 
-}
-
-void DrumsDemixProcessor::updateFMParams(double _modIndex, double _modDepth)
-{
-    modIndex = _modIndex;
-    modDepth = _modDepth;
-}
 
 
-void DrumsDemixProcessor::addMidi(juce::MidiMessage msg, int sampleOffset)
-{
-  midiToProcess.addEvent(msg, sampleOffset);
-}
 
-
-void DrumsDemixProcessor::setEnvLength(double envLenSecs)
-{
-    // calculate damp based on length
-    if (envLenSecs == 0){// 
-        // always on mode
-        amp = ampMax;
-        dAmp = 0;
-    }
-    else{
-        double envLenSamples = envLenSecs * getSampleRate();
-        dAmp = 1 / envLenSamples / 2; 
-    }
-}

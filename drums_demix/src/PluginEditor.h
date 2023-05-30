@@ -20,7 +20,6 @@
 
 
 #include "PluginProcessor.h"
-#include "NeuralNetwork.h"
 #include "ClickableArea.h"
 
 //==============================================================================
@@ -29,13 +28,9 @@
 
 
 
-class DrumsDemixEditor  :   public juce::AudioProcessorEditor,
+class DrumsDemixEditor  : public juce::AudioProcessorEditor,
                           // listen to buttons
-                          public juce::Button::Listener, 
-                          // listen to sliders
-                          public juce::Slider::Listener, 
-                          // listen to piano keyboard widget
-                          private juce::MidiKeyboardState::Listener,
+                          public juce::Button::Listener,
                           // listen to AudioThumbnail
                           public juce::ChangeListener,
                           public juce::FileDragAndDropTarget,
@@ -51,13 +46,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
 
-    void sliderValueChanged (juce::Slider *slider) override;
     void buttonClicked(juce::Button* btn) override;
-    // from MidiKeyboardState
-    void handleNoteOn(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float
- velocity) override; 
-     // from MidiKeyboardState
-    void handleNoteOff(juce::MidiKeyboardState *source, int midiChannel, int midiNoteNumber, float velocity) override; 
 
     juce::AudioBuffer<float> getAudioBufferFromFile(juce::File file);
 
@@ -65,42 +54,23 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
     void thumbnailChanged();
     
-    void displayOut(juce::File file, juce::AudioThumbnail& thumbnailOut);
-    void displayOut2(juce::AudioBuffer<float>& buffer, juce::AudioThumbnail& thumbnailOut);
+    void displayOut(juce::AudioBuffer<float>& buffer, juce::AudioThumbnail& thumbnailOut);
 
     void paintIfNoFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, at::string Phrase);
 
-    void paintIfFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav);
+    void paintIfFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color);
 
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
     void loadFile(const juce::String& path);
 
-    //void paintIfFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds);
-
     //MODEL INFERENCE
     void InferModels(std::vector<torch::jit::IValue> my_input, torch::Tensor phase, int size);
 
     //CREATE WAV
-    
     void CreateWavQuick(torch::Tensor yKickTensor); 
     void CreateWav(std::vector<at::Tensor> tList);
-
-    // CLICKABLE AREAS
-
-    //void mouseDoubleClick(const juce::MouseEvent& event) override;
-
-    //void mouseDrag(const juce::MouseEvent& e) override
-    //{
-    //    if (e.x >= 10 && e.x<= 10 + getWidth() - 220)
-    //    {
-    //        juce::StringArray pathKick = "C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav";
-    //        kickContainer.performExternalDragDropOfFiles(pathKick, true);
-    //    }
-    //}
-
-    
 
 
 private:
@@ -115,16 +85,15 @@ private:
     };
 
     TransportState state;
-
-
-    juce::ToggleButton envToggle; 
-
-    // torch::nn::Linear linear{1, 2}; 
-    //NeuralNetwork nn{1, 2};
-
-    // needed for the mini piano keyboard
-    juce::MidiKeyboardState kbdState;
-    juce::MidiKeyboardComponent miniPianoKbd; 
+    
+    juce::Image background;
+    
+    juce::ImageComponent imageKit;
+    juce::ImageComponent imageKick;
+    juce::ImageComponent imageSnare;
+    juce::ImageComponent imageToms;
+    juce::ImageComponent imageHihat;
+    juce::ImageComponent imageCymbals;
 
     //buttons
     juce::TextButton testButton;
@@ -146,6 +115,12 @@ private:
     
     juce::TextButton playCymbalsButton;
     juce::TextButton stopCymbalsButton;
+    
+    juce::ImageComponent kickImage;
+    juce::ImageComponent snareImage;
+    juce::ImageComponent tomsImage;
+    juce::ImageComponent hihatImage;
+    juce::ImageComponent cymbalsImage;
 
     ClickableArea areaKick;
     ClickableArea areaSnare;
@@ -154,8 +129,6 @@ private:
     ClickableArea areaCymbals;
 
     ClickableArea areaFull;
-
-
     
     //VISUALIZER
     
@@ -196,7 +169,6 @@ private:
 
     std::vector<float> audioPoints;
     
-
     //audioPoints.call_back(new float (args));
     bool paintOut{ false };
 
@@ -204,7 +176,6 @@ private:
     {
         repaint();
     }
-    
     
     //load TorchScript modules:
     torch::jit::script::Module mymoduleKick;
@@ -220,12 +191,6 @@ private:
     at::Tensor yHihat;
     at::Tensor yCymbals;
 
-
-    //juce::DragAndDropContainer kickContainer;
-
-
-
-    
 
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.

@@ -80,9 +80,6 @@ public:
     //==============================================================================
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
-    void updateFrequency(double newFreq);
-
-    void updateFMParams(double _modIndex, double _modDepth);
 
     /** add some midi to be played at the sent sample offset*/
     void addMidi(juce::MidiMessage msg, int sampleOffset);
@@ -103,31 +100,7 @@ public:
     bool playHihat{ false };
     bool playCymbals{ false };
 private:
-    // double phase;
-    // double dphase;
 
-
-    double baseFrequency;  
-
-    double carrPhase;
-    double carrDPhase;
-
-    //double modFreq; 
-    double modPhase; 
-    double modDPhase; 
-    
-    double modIndex;
-    double modDepth;
-
-    double amp;
-    double ampTarget;
-    double dAmp;  
-    double ampMax;
-
-    double getDPhase(double freq, double sampleRate);
-
-    /** stores messages added from the addMidi function*/
-    juce::MidiBuffer midiToProcess;
 
 
       //==============================================================================
