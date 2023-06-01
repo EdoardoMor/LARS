@@ -33,6 +33,9 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     setSize (1000, 500);
 
 
+    //a text label to print some stuff
+    addAndMakeVisible(textLabel);
+
     addAndMakeVisible(testButton);
     testButton.setButtonText("SEPARATE");
     testButton.setEnabled(false);
@@ -198,7 +201,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
         
 
     try{
-        mymoduleKick=torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+        mymoduleKick=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt"); 
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -206,28 +209,28 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     
 
     try{
-        mymoduleSnare=torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+        mymoduleSnare=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleToms=torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+        mymoduleToms=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleHihat=torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+        mymoduleHihat=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleCymbals=torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
+        mymoduleCymbals=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -390,6 +393,11 @@ void DrumsDemixEditor::resized()
     
 
     areaFull.setBounds(10, (getHeight() / 9) + 10, getWidth() - 220, thumbnailHeight);
+
+    textLabel.setBounds(10, 10 + thumbnailStartPoint + thumbnailHeight, getWidth() - 220, thumbnailHeight);
+    textLabel.setFont(juce::Font(16.0f, juce::Font::bold)); 
+    textLabel.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
+    
 }
 
 
@@ -523,6 +531,20 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
             testButton.setEnabled(true);
             playButton.setEnabled(true);
 
+            auto docsDir = juce::File::getSpecialLocation(juce::File::userMusicDirectory);
+
+            DBG(docsDir.getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::currentApplicationFile).getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::invokedExecutableFile).getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::hostApplicationPath).getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::tempDirectory).getFullPathName());
+
+            textLabel.setText(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getFullPathName(), juce::dontSendNotification);
+
+            /*
+            auto parentDir = juce::File(docsDir.getFullPathName() + "/Che_Cartellona!");
+            parentDir.createDirectory(); */
 
 
         }
@@ -1195,7 +1217,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
 
 
         //-Create the stereo AudioBuffer
-        juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, yInstr.sizes()[1]); //need to change last argument to let it be dynamic!
+        juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, yInstr.sizes()[1]); 
 
         //-Create Source
         std::unique_ptr<juce::MemoryAudioSource> memSourcePtr (new juce::MemoryAudioSource (bufferY, true, false));
@@ -1205,7 +1227,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         std::unique_ptr<juce::AudioFormatWriter> writerY;
 
         if(torch::equal(yInstr, yKick)) {
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1230,7 +1252,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         }
 
         else if(torch::equal(yInstr, ySnare)) {
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1253,7 +1275,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         }
 
         else if(torch::equal(yInstr, yToms)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1275,7 +1297,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         }
 
         else if(torch::equal(yInstr, yHihat)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1299,7 +1321,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
         }
 
         else if(torch::equal(yInstr, yCymbals)){
-            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav")),
+            writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1395,6 +1417,13 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yKickTensor)
         DBG("wav scritto!");
     
        
+
+}
+
+void userTriedToCloseWindow()
+{
+    DBG("CHIUDO!");
+
 
 }
 

@@ -11,9 +11,8 @@ class ClickableArea : public juce::TextButton
 public:
 
 
-    ClickableArea() : TextButton() {
+    ClickableArea() : TextButton() {};
 
-    }
 
     void mouseDoubleClick(const juce::MouseEvent& event)
     {
@@ -50,27 +49,27 @@ public:
     {
         if ((e.eventComponent)->getName() == "areaKick")
         {
-            juce::StringArray path = juce::StringArray("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav");
+            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav";
             Container.performExternalDragDropOfFiles(path, true);
         }
         if ((e.eventComponent)->getName() == "areaSnare")
         {
-            juce::StringArray path = juce::StringArray("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav");
+            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav";
             Container.performExternalDragDropOfFiles(path, true);
         }
         if ((e.eventComponent)->getName() == "areaToms")
         {
-            juce::StringArray path = juce::StringArray("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav");
+            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav";
             Container.performExternalDragDropOfFiles(path, true);
         }
         if ((e.eventComponent)->getName() == "areaHihat")
         {
-            juce::StringArray path = juce::StringArray("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav");
+            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav";
             Container.performExternalDragDropOfFiles(path, true);
         }
         if ((e.eventComponent)->getName() == "areaCymbals")
         {
-            juce::StringArray path = juce::StringArray("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav");
+            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav";
             Container.performExternalDragDropOfFiles(path, true);
         }
     }
@@ -84,6 +83,6 @@ private:
     juce::MemoryAudioSource* srcInst;
     juce::AudioFormatReaderSource* srcFull;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ClickableArea)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ClickableArea);
 
 };

@@ -63,6 +63,8 @@ public:
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
+    virtual void userTriedToCloseWindow() override;
+
     void loadFile(const juce::String& path);
 
     //MODEL INFERENCE
@@ -71,6 +73,9 @@ public:
     //CREATE WAV
     void CreateWavQuick(torch::Tensor yKickTensor); 
     void CreateWav(std::vector<at::Tensor> tList);
+
+
+    
 
 
 private:
@@ -192,6 +197,9 @@ private:
     at::Tensor yCymbals;
 
 
+    juce::Label textLabel;
+
+    
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DrumsDemixProcessor& audioProcessor;
