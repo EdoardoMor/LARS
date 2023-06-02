@@ -20,10 +20,7 @@
 
 //==============================================================================
 DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
-    : AudioProcessorEditor (&p), formatManager(), thumbnailCache {5},thumbnail {512, formatManager, thumbnailCache}, thumbnailCacheKickOut {5},thumbnailKickOut {512, formatManager, thumbnailCacheKickOut}, thumbnailCacheSnareOut {5},thumbnailSnareOut {512, formatManager, thumbnailCacheSnareOut},
-        thumbnailCacheTomsOut {5},thumbnailTomsOut {512, formatManager, thumbnailCacheTomsOut},
-        thumbnailCacheHihatOut {5},thumbnailHihatOut {512, formatManager, thumbnailCacheHihatOut},
-    thumbnailCacheCymbalsOut{ 5 }, thumbnailCymbalsOut{ 512, formatManager, thumbnailCacheCymbalsOut }, audioProcessor(p), state(Stopped),
+    : AudioProcessorEditor (&p), formatManager(), audioProcessor(p), state(Stopped),
     areaKick{}, areaSnare{}, areaToms{}, areaHihat{}, areaCymbals{}, areaFull{}
 
 {
@@ -31,6 +28,24 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (1000, 500);
+
+    thumbnailCache = new juce::AudioThumbnailCache(5);
+    thumbnail = new juce::AudioThumbnail(512, formatManager, *thumbnailCache);
+
+    thumbnailCacheKickOut = new juce::AudioThumbnailCache(5);
+    thumbnailKickOut = new juce::AudioThumbnail(512, formatManager, *thumbnailCacheKickOut);
+
+    thumbnailCacheSnareOut = new juce::AudioThumbnailCache(5);
+    thumbnailSnareOut = new juce::AudioThumbnail(512, formatManager, *thumbnailCacheSnareOut);
+
+    thumbnailCacheTomsOut = new juce::AudioThumbnailCache(5);
+    thumbnailTomsOut = new juce::AudioThumbnail(512, formatManager, *thumbnailCacheSnareOut);
+
+    thumbnailCacheHihatOut = new juce::AudioThumbnailCache(5);
+    thumbnailHihatOut = new juce::AudioThumbnail(512, formatManager, *thumbnailCacheSnareOut);
+
+    thumbnailCacheCymbalsOut = new juce::AudioThumbnailCache(5);
+    thumbnailCymbalsOut = new juce::AudioThumbnail(512, formatManager, *thumbnailCacheSnareOut);
 
 
     //a text label to print some stuff
@@ -59,7 +74,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaFull.setAlpha(0);
     areaFull.setName("areaFull");
     
-    auto kitImage = juce::ImageCache::getFromFile(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/images/kit.jpeg"));
+    auto kitImage = juce::ImageCache::getFromFile(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/images/kit.jpeg"));
     imageKit.setImage(kitImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageKit);
       
@@ -81,7 +96,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaKick.setAlpha(0);
     areaKick.setName("areaKick");
     
-    auto kickImage = juce::ImageCache::getFromFile(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/images/kick.jpeg"));
+    auto kickImage = juce::ImageCache::getFromFile(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/images/kick.jpeg"));
     imageKick.setImage(kickImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageKick);
        
@@ -103,7 +118,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaSnare.setAlpha(0);
     areaSnare.setName("areaSnare");
     
-    auto snareImage = juce::ImageCache::getFromFile(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/images/snare.png"));
+    auto snareImage = juce::ImageCache::getFromFile(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/images/snare.png"));
     imageSnare.setImage(snareImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageSnare);
      
@@ -125,7 +140,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaToms.setAlpha(0);
     areaToms.setName("areaToms");
     
-    auto tomsImage = juce::ImageCache::getFromFile(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/images/toms.png"));
+    auto tomsImage = juce::ImageCache::getFromFile(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/images/toms.png"));
     imageToms.setImage(tomsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageToms);
 
@@ -147,7 +162,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaHihat.setAlpha(0);
     areaHihat.setName("areaHihat");
     
-    auto hihatImage = juce::ImageCache::getFromFile(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/images/hihat.png"));
+    auto hihatImage = juce::ImageCache::getFromFile(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/images/hihat.png"));
     imageHihat.setImage(hihatImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageHihat);
             
@@ -169,7 +184,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaCymbals.setAlpha(0);
     areaCymbals.setName("areaCymbals");
     
-    auto cymbalsImage = juce::ImageCache::getFromFile(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/images/cymbals.png"));
+    auto cymbalsImage = juce::ImageCache::getFromFile(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/images/cymbals.png"));
     imageCymbals.setImage(cymbalsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageCymbals);
     
@@ -188,12 +203,12 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     audioProcessor.transportProcessorCymbals.addChangeListener(this);
     
     //VISUALIZER
-    thumbnail.addChangeListener(this);
-    thumbnailKickOut.addChangeListener(this);
-    thumbnailSnareOut.addChangeListener(this);
-    thumbnailTomsOut.addChangeListener(this);
-    thumbnailHihatOut.addChangeListener(this);
-    thumbnailCymbalsOut.addChangeListener(this);
+    thumbnail->addChangeListener(this);
+    thumbnailKickOut->addChangeListener(this);
+    thumbnailSnareOut->addChangeListener(this);
+    thumbnailTomsOut->addChangeListener(this);
+    thumbnailHihatOut->addChangeListener(this);
+    thumbnailCymbalsOut->addChangeListener(this);
 
     
 
@@ -243,6 +258,37 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
 
 DrumsDemixEditor::~DrumsDemixEditor()
 {
+
+    DBG("CHIUDOOOOO!!");
+    audioProcessor.transportProcessor.releaseResources();
+    audioProcessor.transportProcessor.setSource(nullptr);
+    delete thumbnail;
+    delete thumbnailCache;
+
+    audioProcessor.transportProcessorKick.releaseResources();
+    audioProcessor.transportProcessorKick.setSource(nullptr);
+    delete thumbnailKickOut;
+    delete thumbnailCacheKickOut;
+
+    audioProcessor.transportProcessorSnare.releaseResources();
+    audioProcessor.transportProcessorSnare.setSource(nullptr);
+    delete thumbnailSnareOut;
+    delete thumbnailCacheSnareOut;
+
+    audioProcessor.transportProcessorToms.releaseResources();
+    audioProcessor.transportProcessorToms.setSource(nullptr);
+    delete thumbnailTomsOut;
+    delete thumbnailCacheTomsOut;
+
+    audioProcessor.transportProcessorHihat.releaseResources();
+    audioProcessor.transportProcessorHihat.setSource(nullptr);
+    delete thumbnailHihatOut;
+    delete thumbnailCacheHihatOut;
+
+    audioProcessor.transportProcessorCymbals.releaseResources();
+    audioProcessor.transportProcessorCymbals.setSource(nullptr);
+    delete thumbnailCymbalsOut;
+    delete thumbnailCacheCymbalsOut;
 }
 
 //==============================================================================
@@ -253,7 +299,7 @@ void DrumsDemixEditor::paint(juce::Graphics& g)
     g.setColour(juce::Colours::white);
     
     //Background image
-    background = juce::ImageCache::getFromFile(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/images/background.png"));
+    background = juce::ImageCache::getFromFile(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/images/background.png"));
     g.drawImageWithin(background, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement::stretchToFit);
     
     /*
@@ -300,45 +346,45 @@ void DrumsDemixEditor::paint(juce::Graphics& g)
     int thumbnailStartPoint = (getHeight() / 9) + 10;
     juce::Rectangle<int> thumbnailBounds (10, (getHeight() / 9)+10, getWidth() - 220, thumbnailHeight);
     
-           if (thumbnail.getNumChannels() == 0)
+           if (thumbnail->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBounds, "Drop a file or load it");
            else
-               paintIfFileLoaded (g, thumbnailBounds, thumbnail, juce::Colours::red);
+               paintIfFileLoaded (g, thumbnailBounds, *thumbnail, juce::Colours::red);
         
     juce::Rectangle<int> thumbnailBoundsKickOut (10,10+ thumbnailStartPoint + thumbnailHeight, getWidth() - 220, thumbnailHeight);
     
-           if (thumbnailKickOut.getNumChannels() == 0)
+           if (thumbnailKickOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsKickOut, "Kick");
            else
-               paintIfFileLoaded (g, thumbnailBoundsKickOut, thumbnailKickOut, juce::Colours::blue);
+               paintIfFileLoaded (g, thumbnailBoundsKickOut, *thumbnailKickOut, juce::Colours::blue);
     
     juce::Rectangle<int> thumbnailBoundsSnareOut (10,20+ thumbnailStartPoint + thumbnailHeight*2, getWidth() - 220, thumbnailHeight);
     
-           if (thumbnailSnareOut.getNumChannels() == 0)
+           if (thumbnailSnareOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsSnareOut, "Snare");
            else
-               paintIfFileLoaded (g, thumbnailBoundsSnareOut, thumbnailSnareOut, juce::Colours::green);
+               paintIfFileLoaded (g, thumbnailBoundsSnareOut, *thumbnailSnareOut, juce::Colours::green);
     
     juce::Rectangle<int> thumbnailBoundsTomsOut (10,30+ thumbnailStartPoint + thumbnailHeight*3, getWidth() - 220, thumbnailHeight);
     
-           if (thumbnailTomsOut.getNumChannels() == 0)
+           if (thumbnailTomsOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsTomsOut, "Toms");
            else
-               paintIfFileLoaded (g, thumbnailBoundsTomsOut, thumbnailTomsOut, juce::Colours::darkgrey);
+               paintIfFileLoaded (g, thumbnailBoundsTomsOut, *thumbnailTomsOut, juce::Colours::darkgrey);
     
     juce::Rectangle<int> thumbnailBoundsHihatOut (10,40+ thumbnailStartPoint + thumbnailHeight*4, getWidth() - 220, thumbnailHeight);
     
-           if (thumbnailHihatOut.getNumChannels() == 0)
+           if (thumbnailHihatOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsHihatOut, "Hihat");
            else
-               paintIfFileLoaded (g, thumbnailBoundsHihatOut, thumbnailHihatOut, juce::Colours::purple);
+               paintIfFileLoaded (g, thumbnailBoundsHihatOut, *thumbnailHihatOut, juce::Colours::purple);
     
     juce::Rectangle<int> thumbnailBoundsCymbalsOut (10,50+ thumbnailStartPoint + thumbnailHeight*5, getWidth() - 220, thumbnailHeight);
     
-           if (thumbnailCymbalsOut.getNumChannels() == 0)
+           if (thumbnailCymbalsOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsCymbalsOut, "Cymbals");
            else
-               paintIfFileLoaded (g, thumbnailBoundsCymbalsOut, thumbnailCymbalsOut, juce::Colours::black);
+               paintIfFileLoaded (g, thumbnailBoundsCymbalsOut, *thumbnailCymbalsOut, juce::Colours::black);
     
 }
 
@@ -549,7 +595,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
         }
         //VISUALIZER
-        thumbnail.setSource(new juce::FileInputSource(myFile));
+        thumbnail->setSource(new juce::FileInputSource(myFile));
     }
 
     if (btn == &playButton){
@@ -890,12 +936,12 @@ void DrumsDemixEditor::displayOut(juce::AudioBuffer<float>& buffer, juce::AudioT
 //VISUALIZER
 void DrumsDemixEditor::changeListenerCallback (juce::ChangeBroadcaster* source)
   {
-    if (source == &thumbnail) { repaint(); }
-    if (source == &thumbnailKickOut) { repaint(); }
-    if (source == &thumbnailSnareOut) { repaint(); }
-    if (source == &thumbnailTomsOut) { repaint(); }
-    if (source == &thumbnailHihatOut) { repaint(); }
-    if (source == &thumbnailCymbalsOut) { repaint(); }
+    if (source == thumbnail) { repaint(); }
+    if (source == thumbnailKickOut) { repaint(); }
+    if (source == thumbnailSnareOut) { repaint(); }
+    if (source == thumbnailTomsOut) { repaint(); }
+    if (source == thumbnailHihatOut) { repaint(); }
+    if (source == thumbnailCymbalsOut) { repaint(); }
     if(source == &audioProcessor.transportProcessor)
     {
         if(audioProcessor.transportProcessor.isPlaying())
@@ -1087,7 +1133,7 @@ void DrumsDemixEditor::loadFile(const juce::String& path)
     testButton.setEnabled(true);
     playButton.setEnabled(true);
 
-    thumbnail.setSource(new juce::FileInputSource(file));
+    thumbnail->setSource(new juce::FileInputSource(file));
 
 }
 
@@ -1148,7 +1194,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         /// RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
 
         try {
-            mymoduleKick = torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+            mymoduleKick = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
@@ -1156,28 +1202,28 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
 
         try {
-            mymoduleSnare = torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+            mymoduleSnare = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleToms = torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+            mymoduleToms = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleHihat = torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+            mymoduleHihat = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleCymbals = torch::jit::load("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_Cymbals.pt");
+            mymoduleCymbals = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_Cymbals.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
@@ -1248,7 +1294,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav"), thumbnailKickOut);
 
-            displayOut(bufferY,thumbnailKickOut);
+            displayOut(bufferY,*thumbnailKickOut);
         }
 
         else if(torch::equal(yInstr, ySnare)) {
@@ -1270,7 +1316,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
 
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav"), thumbnailSnareOut);
-            displayOut(bufferY, thumbnailSnareOut);
+            displayOut(bufferY, *thumbnailSnareOut);
 
         }
 
@@ -1293,7 +1339,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             areaToms.setSrcInst(memSourcePtr.release());
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav"), thumbnailTomsOut);
-            displayOut(bufferY, thumbnailTomsOut);
+            displayOut(bufferY, *thumbnailTomsOut);
         }
 
         else if(torch::equal(yInstr, yHihat)){
@@ -1317,7 +1363,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
 
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav"), thumbnailHihatOut);
-            displayOut(bufferY, thumbnailHihatOut);
+            displayOut(bufferY, *thumbnailHihatOut);
         }
 
         else if(torch::equal(yInstr, yCymbals)){
@@ -1339,7 +1385,7 @@ void DrumsDemixEditor::CreateWav(std::vector<at::Tensor> tList)
             areaCymbals.setSrcInst(memSourcePtr.release());
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav"), thumbnailCymbalsOut);
-            displayOut(bufferY, thumbnailCymbalsOut);
+            displayOut(bufferY, *thumbnailCymbalsOut);
 
         }
 
@@ -1390,7 +1436,7 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yKickTensor)
         juce::WavAudioFormat formatWav;
         std::unique_ptr<juce::AudioFormatWriter> writerY;
 
-        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav")),
+        writerY.reset (formatWav.createWriterFor(new juce::FileOutputStream(juce::File("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav")),
                                         44100.0,
                                         bufferY.getNumChannels(),
                                         16,
@@ -1411,7 +1457,7 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yKickTensor)
 
             //displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav"), thumbnailKickOut);
 
-            displayOut(bufferY,thumbnailKickOut);
+            displayOut(bufferY,*thumbnailKickOut);
        
 
         DBG("wav scritto!");
@@ -1420,10 +1466,4 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yKickTensor)
 
 }
 
-void userTriedToCloseWindow()
-{
-    DBG("CHIUDO!");
-
-
-}
 

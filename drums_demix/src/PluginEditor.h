@@ -63,8 +63,6 @@ public:
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
-    virtual void userTriedToCloseWindow() override;
-
     void loadFile(const juce::String& path);
 
     //MODEL INFERENCE
@@ -137,23 +135,23 @@ private:
     
     //VISUALIZER
     
-    juce::AudioThumbnail thumbnail;
-    juce::AudioThumbnailCache thumbnailCache;
+    juce::AudioThumbnail* thumbnail;
+    juce::AudioThumbnailCache* thumbnailCache;
 
-    juce::AudioThumbnail thumbnailKickOut;
-    juce::AudioThumbnailCache thumbnailCacheKickOut;
+    juce::AudioThumbnail* thumbnailKickOut;
+    juce::AudioThumbnailCache* thumbnailCacheKickOut;
     
-    juce::AudioThumbnail thumbnailSnareOut;
-    juce::AudioThumbnailCache thumbnailCacheSnareOut;
+    juce::AudioThumbnail* thumbnailSnareOut;
+    juce::AudioThumbnailCache* thumbnailCacheSnareOut;
     
-    juce::AudioThumbnail thumbnailTomsOut;
-    juce::AudioThumbnailCache thumbnailCacheTomsOut;
+    juce::AudioThumbnail* thumbnailTomsOut;
+    juce::AudioThumbnailCache* thumbnailCacheTomsOut;
     
-    juce::AudioThumbnail thumbnailHihatOut;
-    juce::AudioThumbnailCache thumbnailCacheHihatOut;
+    juce::AudioThumbnail* thumbnailHihatOut;
+    juce::AudioThumbnailCache* thumbnailCacheHihatOut;
     
-    juce::AudioThumbnail thumbnailCymbalsOut;
-    juce::AudioThumbnailCache thumbnailCacheCymbalsOut;
+    juce::AudioThumbnail* thumbnailCymbalsOut;
+    juce::AudioThumbnailCache* thumbnailCacheCymbalsOut;
 
     
     //------------------------------------------------------------------------------------

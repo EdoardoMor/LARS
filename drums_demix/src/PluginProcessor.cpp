@@ -26,6 +26,7 @@ DrumsDemixProcessor::DrumsDemixProcessor()
 
 DrumsDemixProcessor::~DrumsDemixProcessor()
 {
+
 }
 
 //==============================================================================
