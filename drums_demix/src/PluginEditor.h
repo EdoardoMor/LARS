@@ -22,6 +22,8 @@
 #include "PluginProcessor.h"
 #include "ClickableArea.h"
 
+
+
 //==============================================================================
 /**
 */
@@ -51,8 +53,11 @@ public:
     juce::AudioBuffer<float> getAudioBufferFromFile(juce::File file);
     
     //juce::File Absolute = juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix");
-    juce::File Absolute = juce::File::getCurrentWorkingDirectory().getParentDirectory();
+    juce::File absolutePath = juce::File::getCurrentWorkingDirectory().getParentDirectory();
     //juce::String Path = Absolute.getFullPathName();
+
+
+
     
     //VISUALIZER
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
@@ -74,13 +79,17 @@ public:
 
     //CREATE WAV
     void CreateWavQuick(torch::Tensor yKickTensor, juce::String path, juce::String name); 
-    void CreateWav(std::vector<at::Tensor> tList);
+    void CreateWav(std::vector<at::Tensor> tList, juce::String name);
 
 
 
 private:
 
     juce::String inputFileName;
+
+    juce::File docsDir;
+    juce::File filesDir;
+
 
     enum TransportState
     {

@@ -6,10 +6,10 @@
 #include <cmath>
 #include "PluginEditor.h"
 
+
 class ClickableArea : public juce::TextButton
 {
 public:
-
 
     ClickableArea() : TextButton() {};
 
@@ -43,33 +43,45 @@ public:
         srcFull = sF;
     }
 
+    void setFilesDir(juce::File fDir) {
+        fileDir = fDir;
+    }
+
+    void setInFile(juce::String inF) {
+        inputFileName = inF;
+    }
 
     
     void mouseDrag(const juce::MouseEvent& e) override
     {
         if ((e.eventComponent)->getName() == "areaKick")
         {
-            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav";
+            //juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav";
+            juce::StringArray path = (fileDir.getChildFile(inputFileName.dropLastCharacters(4) + "_kick.wav")).getFullPathName();
             Container.performExternalDragDropOfFiles(path, true);
         }
         if ((e.eventComponent)->getName() == "areaSnare")
         {
-            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav";
+            //juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceSnare.wav";
+            juce::StringArray path = (fileDir.getChildFile(inputFileName.dropLastCharacters(4) + "_snare.wav")).getFullPathName();
             Container.performExternalDragDropOfFiles(path, true);
         }
         if ((e.eventComponent)->getName() == "areaToms")
         {
-            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav";
+            //juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceToms.wav";
+            juce::StringArray path = (fileDir.getChildFile(inputFileName.dropLastCharacters(4) + "_toms.wav")).getFullPathName();
             Container.performExternalDragDropOfFiles(path, true);
         }
         if ((e.eventComponent)->getName() == "areaHihat")
         {
-            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav";
+            //juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceHihat.wav";
+            juce::StringArray path = (fileDir.getChildFile(inputFileName.dropLastCharacters(4) + "_hihat.wav")).getFullPathName();
             Container.performExternalDragDropOfFiles(path, true);
         }
         if ((e.eventComponent)->getName() == "areaCymbals")
         {
-            juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav";
+            //juce::StringArray path = "C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/wavs/testWavJuceCymbals.wav";
+            juce::StringArray path = (fileDir.getChildFile(inputFileName.dropLastCharacters(4) + "_cymbals.wav")).getFullPathName();
             Container.performExternalDragDropOfFiles(path, true);
         }
     }
@@ -82,6 +94,9 @@ private:
 
     juce::MemoryAudioSource* srcInst;
     juce::AudioFormatReaderSource* srcFull;
+
+    juce::File fileDir;
+    juce::String inputFileName;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ClickableArea);
 
