@@ -49,7 +49,11 @@ public:
     void buttonClicked(juce::Button* btn) override;
 
     juce::AudioBuffer<float> getAudioBufferFromFile(juce::File file);
-
+    
+    //juce::File Absolute = juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix");
+    juce::File Absolute = juce::File::getCurrentWorkingDirectory().getParentDirectory();
+    //juce::String Path = Absolute.getFullPathName();
+    
     //VISUALIZER
     void changeListenerCallback(juce::ChangeBroadcaster* source) override;
     void thumbnailChanged();
@@ -73,11 +77,10 @@ public:
     void CreateWav(std::vector<at::Tensor> tList);
 
 
-    
-
 
 private:
 
+    juce::String inputFileName;
 
     enum TransportState
     {
