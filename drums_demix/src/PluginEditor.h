@@ -69,7 +69,7 @@ public:
     void InferModels(std::vector<torch::jit::IValue> my_input, torch::Tensor phase, int size);
 
     //CREATE WAV
-    void CreateWavQuick(torch::Tensor yKickTensor); 
+    void CreateWavQuick(torch::Tensor yKickTensor, juce::String path, juce::String name); 
     void CreateWav(std::vector<at::Tensor> tList);
 
 
@@ -103,6 +103,7 @@ private:
     juce::TextButton openButton;
     juce::TextButton playButton;
     juce::TextButton stopButton;
+    juce::TextButton downloadKickButton;
     
     juce::TextButton playKickButton;
     juce::TextButton stopKickButton;
@@ -196,6 +197,7 @@ private:
 
 
     juce::Label textLabel;
+    bool separated {false};
 
     
     // This reference is provided as a quick way for your editor to
