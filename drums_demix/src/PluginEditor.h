@@ -109,13 +109,19 @@ private:
     juce::ImageComponent imageToms;
     juce::ImageComponent imageHihat;
     juce::ImageComponent imageCymbals;
+    juce::ImageComponent downloadIcon;
 
     //buttons
     juce::TextButton testButton;
-    juce::TextButton openButton;
+    juce::ImageButton openButton;
     juce::TextButton playButton;
     juce::TextButton stopButton;
-    juce::TextButton downloadKickButton;
+
+    juce::ImageButton downloadKickButton;
+    juce::ImageButton downloadSnareButton;
+    juce::ImageButton downloadTomsButton;
+    juce::ImageButton downloadHihatButton;
+    juce::ImageButton downloadCymbalsButton;
     
     juce::TextButton playKickButton;
     juce::TextButton stopKickButton;
@@ -137,6 +143,7 @@ private:
     juce::ImageComponent tomsImage;
     juce::ImageComponent hihatImage;
     juce::ImageComponent cymbalsImage;
+    juce::ImageComponent browseImage;
 
     ClickableArea areaKick;
     ClickableArea areaSnare;

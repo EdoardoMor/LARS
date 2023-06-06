@@ -69,11 +69,34 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     testButton.setEnabled(false);
     testButton.addListener(this);
 
+    auto downloadIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/download.png"));
 
     addAndMakeVisible(downloadKickButton);
-    downloadKickButton.setButtonText("download");
+    downloadKickButton.setImages(false,true,true,downloadIcon,1.0,juce::Colour(),downloadIcon,0.5,juce::Colour(),downloadIcon,0.8,juce::Colour(),0);
     downloadKickButton.setEnabled(true);
     downloadKickButton.addListener(this);
+
+
+    addAndMakeVisible(downloadSnareButton);
+    downloadSnareButton.setImages(false, true, true, downloadIcon, 1.0, juce::Colour(), downloadIcon, 0.5, juce::Colour(), downloadIcon, 0.8, juce::Colour(), 0);
+    downloadSnareButton.setEnabled(true);
+    downloadSnareButton.addListener(this);
+
+
+    addAndMakeVisible(downloadTomsButton);
+    downloadTomsButton.setImages(false, true, true, downloadIcon, 1.0, juce::Colour(), downloadIcon, 0.5, juce::Colour(), downloadIcon, 0.8, juce::Colour(), 0);
+    downloadTomsButton.setEnabled(true);
+    downloadTomsButton.addListener(this);
+
+    addAndMakeVisible(downloadHihatButton);
+    downloadHihatButton.setImages(false, true, true, downloadIcon, 1.0, juce::Colour(), downloadIcon, 0.5, juce::Colour(), downloadIcon, 0.8, juce::Colour(), 0);
+    downloadHihatButton.setEnabled(true);
+    downloadHihatButton.addListener(this);
+
+    addAndMakeVisible(downloadCymbalsButton);
+    downloadCymbalsButton.setImages(false, true, true, downloadIcon, 1.0, juce::Colour(), downloadIcon, 0.5, juce::Colour(), downloadIcon, 0.8, juce::Colour(), 0);
+    downloadCymbalsButton.setEnabled(true);
+    downloadCymbalsButton.addListener(this);
 
     addAndMakeVisible(playButton);
     playButton.setButtonText("PLAY");
@@ -214,9 +237,10 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     addAndMakeVisible(imageCymbals);
     
     //-----------------------------------------------------
-            
+    auto browseIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/browse.png"));
+
     addAndMakeVisible(openButton);
-    openButton.setButtonText("LOAD A FILE");
+    openButton.setImages(false, true, true, browseIcon, 1.0, juce::Colour(), browseIcon, 0.5, juce::Colour(),browseIcon, 0.8, juce::Colour(), 0);
     openButton.addListener(this);
 
     formatManager.registerBasicFormats();
@@ -240,7 +264,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
         
 
     try{
-        mymoduleKick=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+        mymoduleKick=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -248,28 +272,28 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     
 
     try{
-        mymoduleSnare=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+        mymoduleSnare=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleToms=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+        mymoduleToms=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleHihat=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+        mymoduleHihat=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleCymbals=torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
+        mymoduleCymbals=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -370,42 +394,43 @@ void DrumsDemixEditor::paint(juce::Graphics& g)
 
     int thumbnailHeight = (getHeight() - 200) / 5;
     int thumbnailStartPoint = (getHeight() / 9) + 10;
-    juce::Rectangle<int> thumbnailBounds (10, (getHeight() / 9)+10, getWidth() - 220, thumbnailHeight);
+    int buttonHeight = (getHeight() - 200) / 5;
+    juce::Rectangle<int> thumbnailBounds (10 + buttonHeight, (getHeight() / 9)+10, getWidth() - 220- buttonHeight, thumbnailHeight);
     
            if (thumbnail->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBounds, "Drop a file or load it");
            else
                paintIfFileLoaded (g, thumbnailBounds, *thumbnail, juce::Colours::red);
         
-    juce::Rectangle<int> thumbnailBoundsKickOut (10,10+ thumbnailStartPoint + thumbnailHeight, getWidth() - 220, thumbnailHeight);
+    juce::Rectangle<int> thumbnailBoundsKickOut (10 + buttonHeight,10+ thumbnailStartPoint + thumbnailHeight, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailKickOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsKickOut, "Kick");
            else
                paintIfFileLoaded (g, thumbnailBoundsKickOut, *thumbnailKickOut, juce::Colours::blue);
     
-    juce::Rectangle<int> thumbnailBoundsSnareOut (10,20+ thumbnailStartPoint + thumbnailHeight*2, getWidth() - 220, thumbnailHeight);
+    juce::Rectangle<int> thumbnailBoundsSnareOut (10 + buttonHeight,20+ thumbnailStartPoint + thumbnailHeight*2, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailSnareOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsSnareOut, "Snare");
            else
                paintIfFileLoaded (g, thumbnailBoundsSnareOut, *thumbnailSnareOut, juce::Colours::green);
     
-    juce::Rectangle<int> thumbnailBoundsTomsOut (10,30+ thumbnailStartPoint + thumbnailHeight*3, getWidth() - 220, thumbnailHeight);
+    juce::Rectangle<int> thumbnailBoundsTomsOut (10 + buttonHeight,30+ thumbnailStartPoint + thumbnailHeight*3, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailTomsOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsTomsOut, "Toms");
            else
                paintIfFileLoaded (g, thumbnailBoundsTomsOut, *thumbnailTomsOut, juce::Colours::darkgrey);
     
-    juce::Rectangle<int> thumbnailBoundsHihatOut (10,40+ thumbnailStartPoint + thumbnailHeight*4, getWidth() - 220, thumbnailHeight);
+    juce::Rectangle<int> thumbnailBoundsHihatOut (10 + buttonHeight,40+ thumbnailStartPoint + thumbnailHeight*4, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailHihatOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsHihatOut, "Hihat");
            else
                paintIfFileLoaded (g, thumbnailBoundsHihatOut, *thumbnailHihatOut, juce::Colours::purple);
     
-    juce::Rectangle<int> thumbnailBoundsCymbalsOut (10,50+ thumbnailStartPoint + thumbnailHeight*5, getWidth() - 220, thumbnailHeight);
+    juce::Rectangle<int> thumbnailBoundsCymbalsOut (10 + buttonHeight,50+ thumbnailStartPoint + thumbnailHeight*5, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailCymbalsOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsCymbalsOut, "Cymbals");
@@ -426,41 +451,41 @@ void DrumsDemixEditor::resized()
     
 
     testButton.setBounds(getWidth()/2,0, getWidth()/2, getHeight()/9);
-    openButton.setBounds(0,0, getWidth()/2, getHeight()/9);
+    openButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + 10 + buttonHeight, getHeight() / 9 + 10, buttonHeight, buttonHeight);
 
     
     playButton.setBounds(getWidth() - 220 +20, getHeight() / 9 +10, buttonHeight, buttonHeight);
     stopButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4, getHeight() / 9 +10, buttonHeight, buttonHeight);
-    imageKit.setBounds(getWidth() - 220 + 10 + buttonHeight+ (getHeight() - 200) / 4 , getHeight() / 9 +10, buttonHeight, buttonHeight);
+    imageKit.setBounds(5 , getHeight() / 9 +10, buttonHeight, buttonHeight);
     
 
     playKickButton.setBounds(getWidth() - 220 +20, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
     stopKickButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
-    imageKick.setBounds(getWidth() - 220 + 10 + buttonHeight + (getHeight() - 200) / 4, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
+    imageKick.setBounds(5, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
     areaKick.setBounds(10,10+ thumbnailStartPoint + thumbnailHeight, getWidth() - 220, thumbnailHeight);
     
 
     playSnareButton.setBounds(getWidth() - 220 +20, 20 + thumbnailStartPoint + thumbnailHeight*2, buttonHeight, buttonHeight);
     stopSnareButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4, 20 + thumbnailStartPoint + thumbnailHeight * 2, buttonHeight, buttonHeight);
-    imageSnare.setBounds(getWidth() - 220 + 10 + buttonHeight + (getHeight() - 200) / 4, 20 + thumbnailStartPoint + thumbnailHeight * 2, buttonHeight, buttonHeight);
+    imageSnare.setBounds(5, 20 + thumbnailStartPoint + thumbnailHeight * 2, buttonHeight, buttonHeight);
     areaSnare.setBounds(10, 20 + thumbnailStartPoint + thumbnailHeight * 2, getWidth() - 220, thumbnailHeight);
     
 
     playTomsButton.setBounds(getWidth() - 220 +20, 30 + thumbnailStartPoint + thumbnailHeight*3, buttonHeight, buttonHeight);
     stopTomsButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4, 30 + thumbnailStartPoint + thumbnailHeight * 3, buttonHeight, buttonHeight);
-    imageToms.setBounds(getWidth() - 220 + 10 + buttonHeight + (getHeight() - 200) / 4, 30 + thumbnailStartPoint + thumbnailHeight * 3, buttonHeight, buttonHeight);
+    imageToms.setBounds(5, 30 + thumbnailStartPoint + thumbnailHeight * 3, buttonHeight, buttonHeight);
     areaToms.setBounds(10, 30 + thumbnailStartPoint + thumbnailHeight * 3, getWidth() - 220, thumbnailHeight);
     
 
     playHihatButton.setBounds(getWidth() - 220 +20, 40 + thumbnailStartPoint + thumbnailHeight*4, buttonHeight, buttonHeight);
     stopHihatButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4, 40 + thumbnailStartPoint + thumbnailHeight * 4, buttonHeight, buttonHeight);
-    imageHihat.setBounds(getWidth() - 220 + 10 + buttonHeight + (getHeight() - 200) / 4, 40 + thumbnailStartPoint + thumbnailHeight * 4, buttonHeight, buttonHeight);
+    imageHihat.setBounds(5, 40 + thumbnailStartPoint + thumbnailHeight * 4, buttonHeight, buttonHeight);
     areaHihat.setBounds(10, 40 + thumbnailStartPoint + thumbnailHeight * 4, getWidth() - 220, thumbnailHeight);
     
 
     playCymbalsButton.setBounds(getWidth() - 220 +20, 50 + thumbnailStartPoint + thumbnailHeight*5, buttonHeight, buttonHeight);
     stopCymbalsButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4, 50 + thumbnailStartPoint + thumbnailHeight * 5, buttonHeight, buttonHeight);
-    imageCymbals.setBounds(getWidth() - 220 + 10 + buttonHeight + (getHeight() - 200) / 4, 50 + thumbnailStartPoint + thumbnailHeight * 5, buttonHeight, buttonHeight);
+    imageCymbals.setBounds(5, 50 + thumbnailStartPoint + thumbnailHeight * 5, buttonHeight, buttonHeight);
     areaCymbals.setBounds(10, 50 + thumbnailStartPoint + thumbnailHeight * 5, getWidth() - 220, thumbnailHeight);
     
 
@@ -470,7 +495,11 @@ void DrumsDemixEditor::resized()
     textLabel.setFont(juce::Font(16.0f, juce::Font::bold)); 
     textLabel.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
 
-    downloadKickButton.setBounds(0,getHeight() -20, 200,20);
+    downloadKickButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
+    downloadSnareButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 20 + thumbnailStartPoint + thumbnailHeight * 2, buttonHeight, buttonHeight);
+    downloadTomsButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 30 + thumbnailStartPoint + thumbnailHeight * 3, buttonHeight, buttonHeight);
+    downloadHihatButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 40 + thumbnailStartPoint + thumbnailHeight * 4, buttonHeight, buttonHeight);
+    downloadCymbalsButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 50 + thumbnailStartPoint + thumbnailHeight * 5, buttonHeight, buttonHeight);
     
 }
 
@@ -652,11 +681,61 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
         }
 
-        //juce::File absolutePath = juce::File::getCurrentWorkingDirectory().getParentDirectory();
-        //juce::String Path = absolutePath.getFullPathName();
+    }
 
-        //DBG(Path);
+    if (btn == &downloadSnareButton) {
 
+        juce::FileChooser chooser("Choose a Folder to save the .wav File", juce::File::getSpecialLocation(juce::File::userDesktopDirectory));
+
+        if (chooser.browseForDirectory())
+        {
+            DBG(chooser.getResult().getFullPathName());
+            CreateWavQuick(ySnare, chooser.getResult().getFullPathName(), inputFileName.dropLastCharacters(4) + "_snare.wav");
+
+
+        }
+
+    }
+
+    if (btn == &downloadTomsButton) {
+
+        juce::FileChooser chooser("Choose a Folder to save the .wav File", juce::File::getSpecialLocation(juce::File::userDesktopDirectory));
+
+        if (chooser.browseForDirectory())
+        {
+            DBG(chooser.getResult().getFullPathName());
+            CreateWavQuick(yToms, chooser.getResult().getFullPathName(), inputFileName.dropLastCharacters(4) + "_toms.wav");
+
+
+        }
+
+    }
+
+    if (btn == &downloadHihatButton) {
+
+        juce::FileChooser chooser("Choose a Folder to save the .wav File", juce::File::getSpecialLocation(juce::File::userDesktopDirectory));
+
+        if (chooser.browseForDirectory())
+        {
+            DBG(chooser.getResult().getFullPathName());
+            CreateWavQuick(yHihat, chooser.getResult().getFullPathName(), inputFileName.dropLastCharacters(4) + "_hihats.wav");
+
+
+        }
+
+    }
+
+    if (btn == &downloadCymbalsButton) {
+
+        juce::FileChooser chooser("Choose a Folder to save the .wav File", juce::File::getSpecialLocation(juce::File::userDesktopDirectory));
+
+        if (chooser.browseForDirectory())
+        {
+            DBG(chooser.getResult().getFullPathName());
+            CreateWavQuick(yCymbals, chooser.getResult().getFullPathName(), inputFileName.dropLastCharacters(4) + "_cymbals.wav");
+
+
+        }
 
     }
 
@@ -1273,7 +1352,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         /// RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
 
         try {
-            mymoduleKick = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+            mymoduleKick = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
@@ -1281,28 +1360,28 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
 
         try {
-            mymoduleSnare = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+            mymoduleSnare = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleToms = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+            mymoduleToms = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleHihat = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+            mymoduleHihat = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
         }
 
         try {
-            mymoduleCymbals = torch::jit::load("C:/POLIMI/MAE_Capstone/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
+            mymoduleCymbals = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
         }
         catch (const c10::Error& e) {
             DBG("error"); //indicate error to calling code
