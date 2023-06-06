@@ -1184,6 +1184,12 @@ void DrumsDemixEditor::loadFile(const juce::String& path)
 
     auto file = juce::File(path);
     inputFileName = file.getFileName();
+
+    areaKick.setInFile(inputFileName);
+    areaSnare.setInFile(inputFileName);
+    areaToms.setInFile(inputFileName);
+    areaHihat.setInFile(inputFileName);
+    areaCymbals.setInFile(inputFileName);
     
     DBG(inputFileName);
     
