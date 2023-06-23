@@ -69,12 +69,17 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     //a text label to print some stuff
     //addAndMakeVisible(textLabel);
 
+
+    auto downloadIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/download.png"));
+    auto playIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/play.png"));
+    auto stopIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/stop.png"));
+    auto separate = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/SEPARATE.png"));
+
     addAndMakeVisible(testButton);
-    testButton.setButtonText("SEPARATE");
+    testButton.setImages(false, true, true, separate, 1.0, juce::Colour(), separate, 0.5, juce::Colour(), separate, 0.8, juce::Colour(), 0);
+    //testButton.setButtonText("SEPARATE");
     testButton.setEnabled(false);
     testButton.addListener(this);
-
-    auto downloadIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/download.png"));
 
     addAndMakeVisible(downloadKickButton);
     downloadKickButton.setImages(false,true,true,downloadIcon,1.0,juce::Colour(),downloadIcon,0.5,juce::Colour(),downloadIcon,0.8,juce::Colour(),0);
@@ -104,15 +109,17 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     downloadCymbalsButton.addListener(this);
 
     addAndMakeVisible(playButton);
-    playButton.setButtonText("PLAY");
-    playButton.setEnabled(false);
-    playButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    //playButton.setButtonText("PLAY");
+    //playButton.setEnabled(false);
+    playButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
+    //playButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
     playButton.addListener(this);
 
     addAndMakeVisible(stopButton);
-    stopButton.setButtonText("STOP");
-    stopButton.setEnabled(false);
-    stopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    //stopButton.setButtonText("STOP");
+    //stopButton.setEnabled(false);
+    stopButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
+    //stopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopButton.addListener(this);
 
     //FULL DRUMS
@@ -122,21 +129,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaFull.setName("areaFull");
     
 
-    auto kitImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/kit.png"));
+    auto kitImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/kit.png"));
     imageKit.setImage(kitImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageKit);
       
     //KICK
     addAndMakeVisible(playKickButton);
-    playKickButton.setButtonText("PLAY");
-    playKickButton.setEnabled(false);
-    playKickButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    //playKickButton.setButtonText("PLAY");
+    //playKickButton.setEnabled(false);
+    //playKickButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    playKickButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playKickButton.addListener(this);
 
     addAndMakeVisible(stopKickButton);
-    stopKickButton.setButtonText("STOP");
-    stopKickButton.setEnabled(false);
-    stopKickButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    //stopKickButton.setButtonText("STOP");
+    //stopKickButton.setEnabled(false);
+    //stopKickButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    stopKickButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopKickButton.addListener(this);
 
     addAndMakeVisible(areaKick);
@@ -145,21 +154,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaKick.setName("areaKick");
     
 
-    auto kickImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/kick.png"));
+    auto kickImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/kick.png"));
     imageKick.setImage(kickImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageKick);
        
     //SNARE
     addAndMakeVisible(playSnareButton);
-    playSnareButton.setButtonText("PLAY");
-    playSnareButton.setEnabled(false);
-    playSnareButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    //playSnareButton.setButtonText("PLAY");
+    //playSnareButton.setEnabled(false);
+    //playSnareButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    playSnareButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playSnareButton.addListener(this);
 
     addAndMakeVisible(stopSnareButton);
-    stopSnareButton.setButtonText("STOP");
-    stopSnareButton.setEnabled(false);
-    stopSnareButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    //stopSnareButton.setButtonText("STOP");
+    //stopSnareButton.setEnabled(false);
+    //stopSnareButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    stopSnareButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopSnareButton.addListener(this);
 
     addAndMakeVisible(areaSnare);
@@ -168,21 +179,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaSnare.setName("areaSnare");
     
 
-    auto snareImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/snare.png"));
+    auto snareImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/snare.png"));
     imageSnare.setImage(snareImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageSnare);
      
     //TOMS
     addAndMakeVisible(playTomsButton);
-    playTomsButton.setButtonText("PLAY");
-    playTomsButton.setEnabled(false);
-    playTomsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    //playTomsButton.setButtonText("PLAY");
+    //playTomsButton.setEnabled(false);
+    //playTomsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    playTomsButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playTomsButton.addListener(this);
 
     addAndMakeVisible(stopTomsButton);
-    stopTomsButton.setButtonText("STOP");
-    stopTomsButton.setEnabled(false);
-    stopTomsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    //stopTomsButton.setButtonText("STOP");
+    //stopTomsButton.setEnabled(false);
+    //stopTomsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    stopTomsButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopTomsButton.addListener(this);
 
     addAndMakeVisible(areaToms);
@@ -191,21 +204,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaToms.setName("areaToms");
     
 
-    auto tomsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/toms.png"));
+    auto tomsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/toms.png"));
     imageToms.setImage(tomsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageToms);
 
     //HIHAT
     addAndMakeVisible(playHihatButton);
-    playHihatButton.setButtonText("PLAY");
-    playHihatButton.setEnabled(false);
-    playHihatButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    //playHihatButton.setButtonText("PLAY");
+    //playHihatButton.setEnabled(false);
+    //playHihatButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    playHihatButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playHihatButton.addListener(this);
 
     addAndMakeVisible(stopHihatButton);
-    stopHihatButton.setButtonText("STOP");
-    stopHihatButton.setEnabled(false);
-    stopHihatButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    //stopHihatButton.setButtonText("STOP");
+    //stopHihatButton.setEnabled(false);
+    //stopHihatButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    stopHihatButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopHihatButton.addListener(this);
 
     addAndMakeVisible(areaHihat);
@@ -214,21 +229,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaHihat.setName("areaHihat");
     
 
-    auto hihatImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/hihat.png"));
+    auto hihatImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/hihat.png"));
     imageHihat.setImage(hihatImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageHihat);
             
     //CYMBALS
     addAndMakeVisible(playCymbalsButton);
-    playCymbalsButton.setButtonText("PLAY");
-    playCymbalsButton.setEnabled(false);
-    playCymbalsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    //playCymbalsButton.setButtonText("PLAY");
+    //playCymbalsButton.setEnabled(false);
+    //playCymbalsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
+    playCymbalsButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playCymbalsButton.addListener(this);
 
     addAndMakeVisible(stopCymbalsButton);
-    stopCymbalsButton.setButtonText("STOP");
-    stopCymbalsButton.setEnabled(false);
-    stopCymbalsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    //stopCymbalsButton.setButtonText("STOP");
+    //stopCymbalsButton.setEnabled(false);
+    //stopCymbalsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
+    stopCymbalsButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopCymbalsButton.addListener(this);
 
     addAndMakeVisible(areaCymbals);
@@ -237,20 +254,21 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaCymbals.setName("areaCymbals");
     
 
-    auto cymbalsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/cymbals.png"));
+    auto cymbalsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/cymbals.png"));
     imageCymbals.setImage(cymbalsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageCymbals);
     
     //-----------------------------------------------------
-    auto browseIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/browse.png"));
+    auto browseIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/browse.png"));
 
     addAndMakeVisible(openButton);
     openButton.setImages(false, true, true, browseIcon, 1.0, juce::Colour(), browseIcon, 0.5, juce::Colour(),browseIcon, 0.8, juce::Colour(), 0);
     openButton.addListener(this);
 
     formatManager.registerBasicFormats();
-    audioProcessor.transportProcessor.addChangeListener(this);
     audioProcessor.transportProcessorKick.addChangeListener(this);
+    audioProcessor.transportProcessor.addChangeListener(this);
+    //audioProcessor.transportProcessorKick.addChangeListener(this);
     audioProcessor.transportProcessorSnare.addChangeListener(this);
     audioProcessor.transportProcessorToms.addChangeListener(this);
     audioProcessor.transportProcessorHihat.addChangeListener(this);
@@ -360,12 +378,12 @@ DrumsDemixEditor::~DrumsDemixEditor()
 void DrumsDemixEditor::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    //g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
     g.setColour(juce::Colours::white);
     
     //Background image
-    //background = juce::ImageCache::getFromFile(absolutePath.getChildFile("images/background.png"));
-    //g.drawImageWithin(background, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement::stretchToFit);
+    background = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/DRUMS DEMIX.png"));
+    g.drawImageWithin(background, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement::stretchToFit);
     
     /*
     if (paintOut)
@@ -414,43 +432,60 @@ void DrumsDemixEditor::paint(juce::Graphics& g)
     
            if (thumbnail->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBounds, "Drop a file or load it");
-           else
-               paintIfFileLoaded (g, thumbnailBounds, *thumbnail, juce::Colours::red);
+           else 
+           {
+               paintIfFileLoaded(g, thumbnailBounds, *thumbnail, juce::Colour(200, 149, 127));
+               paintCursorInput(g, thumbnailBounds, *thumbnail, juce::Colour(200, 149, 127));
+           }
+
         
     juce::Rectangle<int> thumbnailBoundsKickOut (10 + buttonHeight,10+ thumbnailStartPoint + thumbnailHeight, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailKickOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsKickOut, "Kick");
            else
-               paintIfFileLoaded (g, thumbnailBoundsKickOut, *thumbnailKickOut, juce::Colours::blue);
+           {
+               paintIfFileLoaded(g, thumbnailBoundsKickOut, *thumbnailKickOut, juce::Colour(199, 128, 130));
+               paintCursorKick(g, thumbnailBoundsKickOut, *thumbnailKickOut, juce::Colour(199, 128, 130));
+           }
     
     juce::Rectangle<int> thumbnailBoundsSnareOut (10 + buttonHeight,20+ thumbnailStartPoint + thumbnailHeight*2, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailSnareOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsSnareOut, "Snare");
-           else
-               paintIfFileLoaded (g, thumbnailBoundsSnareOut, *thumbnailSnareOut, juce::Colours::green);
+           else 
+           {
+               paintIfFileLoaded(g, thumbnailBoundsSnareOut, *thumbnailSnareOut, juce::Colour(139, 188, 172));
+               paintCursorSnare(g, thumbnailBoundsSnareOut, *thumbnailSnareOut, juce::Colour(139, 188, 172));
+           }
     
     juce::Rectangle<int> thumbnailBoundsTomsOut (10 + buttonHeight,30+ thumbnailStartPoint + thumbnailHeight*3, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailTomsOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsTomsOut, "Toms");
-           else
-               paintIfFileLoaded (g, thumbnailBoundsTomsOut, *thumbnailTomsOut, juce::Colours::darkgrey);
+           else {
+               paintIfFileLoaded(g, thumbnailBoundsTomsOut, *thumbnailTomsOut, juce::Colour(135, 139, 192));
+               paintCursorToms(g, thumbnailBoundsTomsOut, *thumbnailTomsOut, juce::Colour(135, 139, 192));
+           }
     
     juce::Rectangle<int> thumbnailBoundsHihatOut (10 + buttonHeight,40+ thumbnailStartPoint + thumbnailHeight*4, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailHihatOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsHihatOut, "Hihat");
-           else
-               paintIfFileLoaded (g, thumbnailBoundsHihatOut, *thumbnailHihatOut, juce::Colours::purple);
+           else {
+               paintIfFileLoaded(g, thumbnailBoundsHihatOut, *thumbnailHihatOut, juce::Colour(127, 181, 181));
+               paintCursorHihat(g, thumbnailBoundsHihatOut, *thumbnailHihatOut, juce::Colour(127, 181, 181));
+           }
+
     
     juce::Rectangle<int> thumbnailBoundsCymbalsOut (10 + buttonHeight,50+ thumbnailStartPoint + thumbnailHeight*5, getWidth() - 220 - buttonHeight, thumbnailHeight);
     
            if (thumbnailCymbalsOut->getNumChannels() == 0)
                paintIfNoFileLoaded (g, thumbnailBoundsCymbalsOut, "Cymbals");
-           else
-               paintIfFileLoaded (g, thumbnailBoundsCymbalsOut, *thumbnailCymbalsOut, juce::Colours::black);
+           else {
+               paintIfFileLoaded(g, thumbnailBoundsCymbalsOut, *thumbnailCymbalsOut, juce::Colour(180, 182, 145));
+               paintCursorCymbals(g, thumbnailBoundsCymbalsOut, *thumbnailCymbalsOut, juce::Colour(180, 182, 145));
+           }
     
 }
 
@@ -465,7 +500,7 @@ void DrumsDemixEditor::resized()
     int thumbnailStartPoint = (getHeight() / 9) + 10;
     
 
-    testButton.setBounds(getWidth()/2,0, getWidth()/2, getHeight()/9);
+    testButton.setBounds(getWidth()/2,5, getWidth()/2, getHeight()/9);
     openButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + 10 + buttonHeight, getHeight() / 9 + 10, buttonHeight, buttonHeight);
 
     
@@ -615,11 +650,11 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
         separated == true;
 
-        playKickButton.setEnabled(true);
-        playSnareButton.setEnabled(true);
-        playTomsButton.setEnabled(true);
-        playHihatButton.setEnabled(true);
-        playCymbalsButton.setEnabled(true);
+        //playKickButton.setEnabled(true);
+        //playSnareButton.setEnabled(true);
+        //playTomsButton.setEnabled(true);
+        //playHihatButton.setEnabled(true);
+        //playCymbalsButton.setEnabled(true);
              
 
     }
@@ -660,7 +695,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
             }
             DBG("openbuttonclicked");
             testButton.setEnabled(true);
-            playButton.setEnabled(true);
+            //playButton.setEnabled(true);
 
             auto docsDir = juce::File::getSpecialLocation(juce::File::userMusicDirectory);
 
@@ -803,6 +838,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
     }
 
     if (btn == &playSnareButton) {
+        //audioProcessor.transportProcessorSnare.setPosition(0.0);
         audioProcessor.playInput = false;
         audioProcessor.playKick = false;
         audioProcessor.playSnare = true;
@@ -907,20 +943,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessor.setPosition(0.0);
-                playButton.setEnabled(true);
-                stopButton.setEnabled(false);
+                //playButton.setEnabled(true);
+                //stopButton.setEnabled(false);
                 break;
             case Starting:
-                stopButton.setEnabled(true);
-                playButton.setEnabled(false);
+                //stopButton.setEnabled(true);
+                //playButton.setEnabled(false);
                 audioProcessor.transportProcessor.start();
                 break;
             case Playing:
-                stopButton.setEnabled(true);
+                //stopButton.setEnabled(true);
                 break;
             case Stopping:
-                stopButton.setEnabled(false);
-                playButton.setEnabled(true);
+                //stopButton.setEnabled(false);
+                //playButton.setEnabled(true);
                 audioProcessor.transportProcessor.stop();
                 break;
             }
@@ -937,20 +973,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorKick.setPosition(0.0);
-                playKickButton.setEnabled(true);
-                stopKickButton.setEnabled(false);
+                //playKickButton.setEnabled(true);
+                //stopKickButton.setEnabled(false);
                 break;
             case Starting:
-                stopKickButton.setEnabled(true);
-                playKickButton.setEnabled(false);
+                //stopKickButton.setEnabled(true);
+                //playKickButton.setEnabled(false);
                 audioProcessor.transportProcessorKick.start();
                 break;
             case Playing:
-                stopKickButton.setEnabled(true);
+                //stopKickButton.setEnabled(true);
                 break;
             case Stopping:
-                stopKickButton.setEnabled(false);
-                playKickButton.setEnabled(true);
+                //stopKickButton.setEnabled(false);
+                //playKickButton.setEnabled(true);
                 audioProcessor.transportProcessorKick.stop();
                 break;
             }
@@ -967,20 +1003,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorSnare.setPosition(0.0);
-                playSnareButton.setEnabled(true);
-                stopSnareButton.setEnabled(false);
+                //playSnareButton.setEnabled(true);
+                //stopSnareButton.setEnabled(false);
                 break;
             case Starting:
-                stopSnareButton.setEnabled(true);
-                playSnareButton.setEnabled(false);
+                //stopSnareButton.setEnabled(true);
+                //playSnareButton.setEnabled(false);
                 audioProcessor.transportProcessorSnare.start();
                 break;
             case Playing:
-                stopSnareButton.setEnabled(true);
+                //stopSnareButton.setEnabled(true);
                 break;
             case Stopping:
-                stopSnareButton.setEnabled(false);
-                playSnareButton.setEnabled(true);
+                //stopSnareButton.setEnabled(false);
+                //playSnareButton.setEnabled(true);
                 audioProcessor.transportProcessorSnare.stop();
                 break;
             }
@@ -997,20 +1033,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorToms.setPosition(0.0);
-                playTomsButton.setEnabled(true);
-                stopTomsButton.setEnabled(false);
+                //playTomsButton.setEnabled(true);
+                //stopTomsButton.setEnabled(false);
                 break;
             case Starting:
-                stopTomsButton.setEnabled(true);
-                playTomsButton.setEnabled(false);
+                //stopTomsButton.setEnabled(true);
+                //playTomsButton.setEnabled(false);
                 audioProcessor.transportProcessorToms.start();
                 break;
             case Playing:
-                stopTomsButton.setEnabled(true);
+                //stopTomsButton.setEnabled(true);
                 break;
             case Stopping:
-                stopTomsButton.setEnabled(false);
-                playTomsButton.setEnabled(true);
+                //stopTomsButton.setEnabled(false);
+                //playTomsButton.setEnabled(true);
                 audioProcessor.transportProcessorToms.stop();
                 break;
             }
@@ -1027,20 +1063,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorHihat.setPosition(0.0);
-                playHihatButton.setEnabled(true);
-                stopHihatButton.setEnabled(false);
+                //playHihatButton.setEnabled(true);
+                //stopHihatButton.setEnabled(false);
                 break;
             case Starting:
-                stopHihatButton.setEnabled(true);
-                playHihatButton.setEnabled(false);
+                //stopHihatButton.setEnabled(true);
+                //playHihatButton.setEnabled(false);
                 audioProcessor.transportProcessorHihat.start();
                 break;
             case Playing:
-                stopHihatButton.setEnabled(true);
+                //stopHihatButton.setEnabled(true);
                 break;
             case Stopping:
-                stopHihatButton.setEnabled(false);
-                playHihatButton.setEnabled(true);
+                //stopHihatButton.setEnabled(false);
+                //playHihatButton.setEnabled(true);
                 audioProcessor.transportProcessorHihat.stop();
                 break;
             }
@@ -1057,20 +1093,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorCymbals.setPosition(0.0);
-                playCymbalsButton.setEnabled(true);
-                stopCymbalsButton.setEnabled(false);
+                //playCymbalsButton.setEnabled(true);
+                //stopCymbalsButton.setEnabled(false);
                 break;
             case Starting:
-                stopCymbalsButton.setEnabled(true);
-                playCymbalsButton.setEnabled(false);
+                //stopCymbalsButton.setEnabled(true);
+                //playCymbalsButton.setEnabled(false);
                 audioProcessor.transportProcessorCymbals.start();
                 break;
             case Playing:
-                stopCymbalsButton.setEnabled(true);
+                //stopCymbalsButton.setEnabled(true);
                 break;
             case Stopping:
-                stopCymbalsButton.setEnabled(false);
-                playCymbalsButton.setEnabled(true);
+                //stopCymbalsButton.setEnabled(false);
+                //playCymbalsButton.setEnabled(true);
                 audioProcessor.transportProcessorCymbals.stop();
                 break;
             }
@@ -1107,6 +1143,7 @@ void DrumsDemixEditor::changeListenerCallback (juce::ChangeBroadcaster* source)
         }
         else
         {
+            DBG("input reset");
         transportStateChanged(Stopped, "input");
         }
     }
@@ -1130,10 +1167,12 @@ void DrumsDemixEditor::changeListenerCallback (juce::ChangeBroadcaster* source)
 
         if (audioProcessor.transportProcessorSnare.isPlaying())
         {
+            DBG("snare start");
             transportStateChanged(Playing, "snare");
         }
         else
         {
+            DBG("snare reset");
             transportStateChanged(Stopped, "snare");
         }
     }
@@ -1182,7 +1221,7 @@ void DrumsDemixEditor::changeListenerCallback (juce::ChangeBroadcaster* source)
 
 void DrumsDemixEditor::paintIfNoFileLoaded (juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, at::string phrase)
   {
-      g.setColour (juce::Colours::darkgrey);
+      g.setColour(juce::Colour(46, 45, 45));
       g.fillRect (thumbnailBounds);
       g.setColour (juce::Colours::white);
       g.drawFittedText (phrase, thumbnailBounds, juce::Justification::centred, 1);
@@ -1192,7 +1231,7 @@ void DrumsDemixEditor::paintIfFileLoaded (juce::Graphics& g, const juce::Rectang
  {
     float thumbnailHeight = (getHeight() - 200) / 5;
     float thumbnailStartPoint = (getHeight() / 9) + 10;
-     g.setColour (juce::Colours::lightgrey);
+     g.setColour (juce::Colour(46, 45, 45));
      g.fillRect (thumbnailBounds);
 
      g.setColour (color);                               // [8]
@@ -1204,46 +1243,117 @@ void DrumsDemixEditor::paintIfFileLoaded (juce::Graphics& g, const juce::Rectang
                              thumbnailWav.getTotalLength(),             // end time
                              1.0f);  // vertical zoom
 
-     g.setColour(juce::Colours::green);
+     g.setColour(juce::Colours::lightgrey);
 
-     if (audioProcessor.playInput) {
-         auto audioPosition = (float)audioProcessor.transportProcessor.getCurrentPosition();
-         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
-         g.drawLine(drawPosition, (float)(getHeight() / 9) + 10, drawPosition,
-             (float)(getHeight() / 9) + 10 + thumbnailHeight, 1.0f);
-     }
-     if (audioProcessor.playKick) {
-         auto audioPosition = (float)audioProcessor.transportProcessorKick.getCurrentPosition();
-         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
-         g.drawLine(drawPosition, (float)10 + thumbnailStartPoint + thumbnailHeight, drawPosition,
-             (float)10 + thumbnailStartPoint + thumbnailHeight +thumbnailHeight, 1.0f);
-     }
-     if (audioProcessor.playSnare) {
-         auto audioPosition = (float)audioProcessor.transportProcessorSnare.getCurrentPosition();
-         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
-         g.drawLine(drawPosition, (float)20 + thumbnailStartPoint + thumbnailHeight * 2, drawPosition,
-             (float)20 + thumbnailStartPoint + thumbnailHeight * 2 +thumbnailHeight, 1.0f);
-     }
-     if (audioProcessor.playToms) {
-         auto audioPosition = (float)audioProcessor.transportProcessorToms.getCurrentPosition();
-         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
-         g.drawLine(drawPosition, (float)30 + thumbnailStartPoint + thumbnailHeight * 3, drawPosition,
-             (float)30 + thumbnailStartPoint + thumbnailHeight * 3 +thumbnailHeight, 1.0f);
-     }
-     if (audioProcessor.playHihat) {
-         auto audioPosition = (float)audioProcessor.transportProcessorHihat.getCurrentPosition();
-         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
-         g.drawLine(drawPosition, (float)40 + thumbnailStartPoint + thumbnailHeight * 4, drawPosition,
-             (float)40 + thumbnailStartPoint + thumbnailHeight * 4 + thumbnailHeight, 1.0f);
-     }
-     if (audioProcessor.playCymbals) {
-         auto audioPosition = (float)audioProcessor.transportProcessorCymbals.getCurrentPosition();
-         auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
-         g.drawLine(drawPosition, (float)50 + thumbnailStartPoint + thumbnailHeight * 5, drawPosition,
-             (float)50 + thumbnailStartPoint + thumbnailHeight * 5 + thumbnailHeight, 1.0f);
-     }
+     //if (audioProcessor.playInput) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessor.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)(getHeight() / 9) + 10, drawPosition,
+     //        (float)(getHeight() / 9) + 10 + thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playKick) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorKick.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)10 + thumbnailStartPoint + thumbnailHeight, drawPosition,
+     //        (float)10 + thumbnailStartPoint + thumbnailHeight +thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playSnare) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorSnare.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)20 + thumbnailStartPoint + thumbnailHeight * 2, drawPosition,
+     //        (float)20 + thumbnailStartPoint + thumbnailHeight * 2 +thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playToms) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorToms.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)30 + thumbnailStartPoint + thumbnailHeight * 3, drawPosition,
+     //        (float)30 + thumbnailStartPoint + thumbnailHeight * 3 +thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playHihat) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorHihat.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)40 + thumbnailStartPoint + thumbnailHeight * 4, drawPosition,
+     //        (float)40 + thumbnailStartPoint + thumbnailHeight * 4 + thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playCymbals) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorCymbals.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)50 + thumbnailStartPoint + thumbnailHeight * 5, drawPosition,
+     //        (float)50 + thumbnailStartPoint + thumbnailHeight * 5 + thumbnailHeight, 1.0f);
+     //}
 
  }
+
+void DrumsDemixEditor::paintCursorInput(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
+    auto audioLength = (float)thumbnailWav.getTotalLength();
+    float thumbnailHeight = (getHeight() - 200) / 5;
+    float thumbnailStartPoint = (getHeight() / 9) + 10;
+    g.setColour(juce::Colours::lightgrey);
+    auto audioPosition = (float)audioProcessor.transportProcessor.getCurrentPosition();
+    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+    g.drawLine(drawPosition, (float)(getHeight() / 9) + 10, drawPosition,
+        (float)(getHeight() / 9) + 10 + thumbnailHeight, 1.0f);
+}
+
+void DrumsDemixEditor::paintCursorKick(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
+    auto audioLength = (float)thumbnailWav.getTotalLength();
+    float thumbnailHeight = (getHeight() - 200) / 5;
+    float thumbnailStartPoint = (getHeight() / 9) + 10;
+    g.setColour(juce::Colours::lightgrey);
+    auto audioPosition = (float)audioProcessor.transportProcessorKick.getCurrentPosition();
+    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+    g.drawLine(drawPosition, (float)10 + thumbnailStartPoint + thumbnailHeight, drawPosition,
+        (float)10 + thumbnailStartPoint + thumbnailHeight + thumbnailHeight, 1.0f);
+}
+
+void DrumsDemixEditor::paintCursorSnare(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
+    auto audioLength = (float)thumbnailWav.getTotalLength();
+    float thumbnailHeight = (getHeight() - 200) / 5;
+    float thumbnailStartPoint = (getHeight() / 9) + 10;
+    g.setColour(juce::Colours::lightgrey);
+    auto audioPosition = (float)audioProcessor.transportProcessorSnare.getCurrentPosition();
+    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+    g.drawLine(drawPosition, (float)20 + thumbnailStartPoint + thumbnailHeight * 2, drawPosition,
+        (float)20 + thumbnailStartPoint + thumbnailHeight * 2 + thumbnailHeight, 1.0f);
+}
+
+void DrumsDemixEditor::paintCursorToms(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
+    auto audioLength = (float)thumbnailWav.getTotalLength();
+    float thumbnailHeight = (getHeight() - 200) / 5;
+    float thumbnailStartPoint = (getHeight() / 9) + 10;
+    g.setColour(juce::Colours::lightgrey);
+    auto audioPosition = (float)audioProcessor.transportProcessorToms.getCurrentPosition();
+    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+    g.drawLine(drawPosition, (float)30 + thumbnailStartPoint + thumbnailHeight * 3, drawPosition,
+        (float)30 + thumbnailStartPoint + thumbnailHeight * 3 + thumbnailHeight, 1.0f);
+}
+
+void DrumsDemixEditor::paintCursorHihat(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
+    auto audioLength = (float)thumbnailWav.getTotalLength();
+    float thumbnailHeight = (getHeight() - 200) / 5;
+    float thumbnailStartPoint = (getHeight() / 9) + 10;
+    g.setColour(juce::Colours::lightgrey);
+    auto audioPosition = (float)audioProcessor.transportProcessorHihat.getCurrentPosition();
+    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+    g.drawLine(drawPosition, (float)40 + thumbnailStartPoint + thumbnailHeight * 4, drawPosition,
+        (float)40 + thumbnailStartPoint + thumbnailHeight * 4 + thumbnailHeight, 1.0f);
+}
+
+void DrumsDemixEditor::paintCursorCymbals(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
+    auto audioLength = (float)thumbnailWav.getTotalLength();
+    float thumbnailHeight = (getHeight() - 200) / 5;
+    float thumbnailStartPoint = (getHeight() / 9) + 10;
+    g.setColour(juce::Colours::lightgrey);
+    auto audioPosition = (float)audioProcessor.transportProcessorCymbals.getCurrentPosition();
+    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+    g.drawLine(drawPosition, (float)50 + thumbnailStartPoint + thumbnailHeight * 5, drawPosition,
+        (float)50 + thumbnailStartPoint + thumbnailHeight * 5 + thumbnailHeight, 1.0f);
+}
+
+
+
+
+
 
 bool DrumsDemixEditor::isInterestedInFileDrag(const juce::StringArray& files)
 {

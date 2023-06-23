@@ -69,6 +69,18 @@ public:
 
     void paintIfFileLoaded(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color);
 
+    void paintCursorInput(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color);
+
+    void paintCursorKick(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color);
+
+    void paintCursorSnare(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color);
+
+    void paintCursorToms(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color);
+
+    void paintCursorHihat(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color);
+
+    void paintCursorCymbals(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color);
+
     bool isInterestedInFileDrag(const juce::StringArray& files) override;
     void filesDropped(const juce::StringArray& files, int x, int y) override;
 
@@ -111,12 +123,14 @@ private:
     juce::ImageComponent imageHihat;
     juce::ImageComponent imageCymbals;
     juce::ImageComponent downloadIcon;
+    juce::ImageComponent play;
+    juce::ImageComponent stop;
 
     //buttons
-    juce::TextButton testButton;
+    juce::ImageButton testButton;
     juce::ImageButton openButton;
-    juce::TextButton playButton;
-    juce::TextButton stopButton;
+    juce::ImageButton playButton;
+    juce::ImageButton stopButton;
 
     juce::ImageButton downloadKickButton;
     juce::ImageButton downloadSnareButton;
@@ -124,20 +138,20 @@ private:
     juce::ImageButton downloadHihatButton;
     juce::ImageButton downloadCymbalsButton;
     
-    juce::TextButton playKickButton;
-    juce::TextButton stopKickButton;
+    juce::ImageButton playKickButton;
+    juce::ImageButton stopKickButton;
     
-    juce::TextButton playSnareButton;
-    juce::TextButton stopSnareButton;
+    juce::ImageButton playSnareButton;
+    juce::ImageButton stopSnareButton;
     
-    juce::TextButton playTomsButton;
-    juce::TextButton stopTomsButton;
+    juce::ImageButton playTomsButton;
+    juce::ImageButton stopTomsButton;
     
-    juce::TextButton playHihatButton;
-    juce::TextButton stopHihatButton;
+    juce::ImageButton playHihatButton;
+    juce::ImageButton stopHihatButton;
     
-    juce::TextButton playCymbalsButton;
-    juce::TextButton stopCymbalsButton;
+    juce::ImageButton playCymbalsButton;
+    juce::ImageButton stopCymbalsButton;
     
     juce::ImageComponent kickImage;
     juce::ImageComponent snareImage;
@@ -145,6 +159,7 @@ private:
     juce::ImageComponent hihatImage;
     juce::ImageComponent cymbalsImage;
     juce::ImageComponent browseImage;
+    juce::ImageComponent separate;
 
     ClickableArea areaKick;
     ClickableArea areaSnare;
@@ -153,6 +168,9 @@ private:
     ClickableArea areaCymbals;
 
     ClickableArea areaFull;
+
+
+
     
     //VISUALIZER
     
