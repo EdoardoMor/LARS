@@ -102,6 +102,7 @@ private:
     juce::File docsDir;
     juce::File filesDir;
     juce::File modelsDir;
+    juce::File imagesDir;
 
 
     enum TransportState

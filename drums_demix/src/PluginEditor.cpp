@@ -36,9 +36,14 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     DBG("the files you separate are in: ");
     DBG(filesDir.getFullPathName());
 
-    modelsDir = juce::File(juce::File::getSpecialLocation(juce::File::userDesktopDirectory).getFullPathName() + "/DrumsDemixModels");
+    modelsDir = juce::File(juce::File::getSpecialLocation(juce::File::userDesktopDirectory).getFullPathName() + "/DrumsDemixUtils/DrumsDemixModels");
     DBG("where the models at: ");
     DBG(modelsDir.getFullPathName());
+
+    imagesDir = juce::File(juce::File::getSpecialLocation(juce::File::userDesktopDirectory).getFullPathName() + "/DrumsDemixUtils/DrumsDemixImages");
+    DBG("where the images at: ");
+    DBG(imagesDir.getFullPathName());
+
 
 
     areaKick.setFilesDir(filesDir);
@@ -69,11 +74,17 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     //a text label to print some stuff
     //addAndMakeVisible(textLabel);
 
-
+    /*
     auto downloadIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/download.png"));
     auto playIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/play.png"));
     auto stopIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/stop.png"));
     auto separate = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/SEPARATE.png"));
+    */
+
+    auto downloadIcon = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/download.png") );
+    auto playIcon = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/play.png") );
+    auto stopIcon = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/stop.png") );
+    auto separate = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/SEPARATE.png") );
 
     addAndMakeVisible(testButton);
     testButton.setImages(false, true, true, separate, 1.0, juce::Colour(), separate, 0.5, juce::Colour(), separate, 0.8, juce::Colour(), 0);
@@ -129,7 +140,8 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaFull.setName("areaFull");
     
 
-    auto kitImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/kit.png"));
+    //auto kitImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/kit.png"));
+    auto kitImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/kit.png") );
     imageKit.setImage(kitImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageKit);
       
@@ -154,7 +166,8 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaKick.setName("areaKick");
     
 
-    auto kickImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/kick.png"));
+    //auto kickImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/kick.png"));
+    auto kickImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/kick.png") );
     imageKick.setImage(kickImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageKick);
        
@@ -179,7 +192,8 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaSnare.setName("areaSnare");
     
 
-    auto snareImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/snare.png"));
+    //auto snareImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/snare.png"));
+    auto snareImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/snare.png") );
     imageSnare.setImage(snareImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageSnare);
      
@@ -204,7 +218,8 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaToms.setName("areaToms");
     
 
-    auto tomsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/toms.png"));
+    //auto tomsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/toms.png"));
+    auto tomsImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/snare.png") );
     imageToms.setImage(tomsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageToms);
 
@@ -229,7 +244,8 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaHihat.setName("areaHihat");
     
 
-    auto hihatImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/hihat.png"));
+    //auto hihatImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/hihat.png"));
+    auto hihatImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/hihat.png") );
     imageHihat.setImage(hihatImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageHihat);
             
@@ -254,12 +270,14 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaCymbals.setName("areaCymbals");
     
 
-    auto cymbalsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/cymbals.png"));
+    //auto cymbalsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/cymbals.png"));
+    auto cymbalsImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/cymbals.png") );
     imageCymbals.setImage(cymbalsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageCymbals);
     
     //-----------------------------------------------------
-    auto browseIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/browse.png"));
+    //auto browseIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/browse.png"));
+    auto browseIcon = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/browse.png") );
 
     addAndMakeVisible(openButton);
     openButton.setImages(false, true, true, browseIcon, 1.0, juce::Colour(), browseIcon, 0.5, juce::Colour(),browseIcon, 0.8, juce::Colour(), 0);
@@ -382,7 +400,8 @@ void DrumsDemixEditor::paint(juce::Graphics& g)
     g.setColour(juce::Colours::white);
     
     //Background image
-    background = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/DRUMS DEMIX.png"));
+    //background = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/DRUMS DEMIX.png"));
+    background = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/DRUMS DEMIX.png") );
     g.drawImageWithin(background, 0, 0, getWidth(), getHeight(), juce::RectanglePlacement::stretchToFit);
     
     /*
