@@ -89,6 +89,7 @@ private:
 
     juce::File docsDir;
     juce::File filesDir;
+    juce::File modelsDir;
 
 
     enum TransportState
@@ -215,7 +216,7 @@ private:
     at::Tensor yCymbals;
 
 
-    juce::Label textLabel;
+    //juce::Label textLabel;
     bool separated {false};
 
     

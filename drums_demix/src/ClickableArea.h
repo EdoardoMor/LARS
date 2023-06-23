@@ -17,13 +17,13 @@ public:
     void mouseDoubleClick(const juce::MouseEvent& event)
     {
 
-        if ( (event.eventComponent)->getName() == "areaFull") {
+        if ( (event.eventComponent)->getName() == "areaFull" && fullIsPresent){
             DBG("clickato sample:");
             DBG(makeConversion(event.x, srcFull->getTotalLength()));
             srcFull->setNextReadPosition(makeConversion(event.x, srcFull->getTotalLength()));
 
         }
-        else {
+        else if ( instIsPresent ) {
             DBG("clickato sample:");
             DBG(makeConversion(event.x, srcInst->getTotalLength()));
             srcInst->setNextReadPosition(makeConversion(event.x, srcInst->getTotalLength()));
@@ -32,15 +32,17 @@ public:
     }
 
     int makeConversion(int eventX, int totLen) {
-        return std::floor(((float) eventX / 780.0 ) * totLen); //!!! IL NUMERO AL DENOMINATORE DEVE ESSERE PARI ALLA LUNGHEZZA DELLE THUMBNAIL !!!
+        return std::floor(((float) ( eventX - 58 )/ 720.0 ) * totLen); //!!! IL NUMERO AL DENOMINATORE DEVE ESSERE PARI ALLA LUNGHEZZA DELLE THUMBNAIL !!!
     }
 
     void setSrcInst(juce::MemoryAudioSource* sI){
         srcInst = sI;
+        if (!instIsPresent) instIsPresent = true;
     }
 
     void setSrc(juce::AudioFormatReaderSource* sF) {
         srcFull = sF;
+        if (!fullIsPresent) fullIsPresent = true;
     }
 
     void setFilesDir(juce::File fDir) {
@@ -97,6 +99,9 @@ private:
 
     juce::File fileDir;
     juce::String inputFileName;
+
+    bool fullIsPresent = false;
+    bool instIsPresent = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ClickableArea);
 

@@ -33,8 +33,13 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     docsDir = juce::File::getSpecialLocation(juce::File::userMusicDirectory);
     filesDir = juce::File(docsDir.getFullPathName() + "/FilesToDrop");
     filesDir.createDirectory();
-    DBG("your system directory is in: ");
+    DBG("the files you separate are in: ");
     DBG(filesDir.getFullPathName());
+
+    modelsDir = juce::File(juce::File::getSpecialLocation(juce::File::userDesktopDirectory).getFullPathName() + "/DrumsDemixModels");
+    DBG("where the models at: ");
+    DBG(modelsDir.getFullPathName());
+
 
     areaKick.setFilesDir(filesDir);
     areaSnare.setFilesDir(filesDir);
@@ -62,7 +67,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
 
 
     //a text label to print some stuff
-    addAndMakeVisible(textLabel);
+    //addAndMakeVisible(textLabel);
 
     addAndMakeVisible(testButton);
     testButton.setButtonText("SEPARATE");
@@ -264,7 +269,9 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
         
 
     try{
-        mymoduleKick=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
+        //mymoduleKick=torch::jit::load("../src/scripted_modules/my_scripted_module_kick.pt");
+        juce::String kickString = modelsDir.getFullPathName() + "/my_scripted_module_kick.pt";
+        mymoduleKick = torch::jit::load(kickString.toStdString());
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -272,28 +279,36 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     
 
     try{
-        mymoduleSnare=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
+        //mymoduleSnare=torch::jit::load("../src/scripted_modules/my_scripted_module_snare.pt");
+        juce::String snareString = modelsDir.getFullPathName() + "/my_scripted_module_snare.pt";
+        mymoduleSnare = torch::jit::load(snareString.toStdString());
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleToms=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
+        //mymoduleToms=torch::jit::load("../src/scripted_modules/my_scripted_module_toms.pt");
+        juce::String tomsString = modelsDir.getFullPathName() + "/my_scripted_module_toms.pt";
+        mymoduleToms = torch::jit::load(tomsString.toStdString());
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleHihat=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
+        //mymoduleHihat=torch::jit::load("../src/scripted_modules/my_scripted_module_hihat.pt");
+        juce::String hihatString = modelsDir.getFullPathName() + "/my_scripted_module_hihat.pt";
+        mymoduleHihat = torch::jit::load(hihatString.toStdString());
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        mymoduleCymbals=torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
+        //mymoduleCymbals=torch::jit::load("../src/scripted_modules/my_scripted_module_cymbals.pt");
+        juce::String cymbalsString = modelsDir.getFullPathName() + "/my_scripted_module_cymbals.pt";
+        mymoduleCymbals = torch::jit::load(cymbalsString.toStdString());
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -491,9 +506,9 @@ void DrumsDemixEditor::resized()
 
     areaFull.setBounds(10, (getHeight() / 9) + 10, getWidth() - 220, thumbnailHeight);
 
-    textLabel.setBounds(10, 10 + thumbnailStartPoint + thumbnailHeight, getWidth() - 220, thumbnailHeight);
-    textLabel.setFont(juce::Font(16.0f, juce::Font::bold)); 
-    textLabel.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
+    //textLabel.setBounds(10, 10 + thumbnailStartPoint + thumbnailHeight, getWidth() - 220, thumbnailHeight);
+    //textLabel.setFont(juce::Font(16.0f, juce::Font::bold)); 
+    //textLabel.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
 
     downloadKickButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
     downloadSnareButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 20 + thumbnailStartPoint + thumbnailHeight * 2, buttonHeight, buttonHeight);
@@ -656,7 +671,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
             DBG(juce::File::getSpecialLocation(juce::File::hostApplicationPath).getFullPathName());
             DBG(juce::File::getSpecialLocation(juce::File::tempDirectory).getFullPathName());
 
-            textLabel.setText(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getFullPathName(), juce::dontSendNotification);
+            //textLabel.setText(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getFullPathName(), juce::dontSendNotification);
 
             /*
             auto parentDir = juce::File(docsDir.getFullPathName() + "/Che_Cartellona!");
@@ -1247,7 +1262,10 @@ void DrumsDemixEditor::filesDropped(const juce::StringArray& files, int x, int y
 {
     for (auto file : files)
     {
-        if (isInterestedInFileDrag(files)) 
+        if ((juce::File(file).isAChildOf(filesDir.getFullPathName()))) { DBG("cercando di droppare un file dall'interno!"); };
+
+
+        if (isInterestedInFileDrag(files) && !(juce::File(file).isAChildOf(filesDir.getFullPathName())))
         {
             loadFile(file);
 
@@ -1351,41 +1369,51 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
         /// RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
 
-        try {
-            mymoduleKick = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_kick.pt");
-        }
-        catch (const c10::Error& e) {
-            DBG("error"); //indicate error to calling code
-        }
+         try {
+             //mymoduleKick=torch::jit::load("../src/scripted_modules/my_scripted_module_kick.pt");
+             juce::String kickString = modelsDir.getFullPathName() + "/my_scripted_module_kick.pt";
+             mymoduleKick = torch::jit::load(kickString.toStdString());
+         }
+         catch (const c10::Error& e) {
+             DBG("error"); //indicate error to calling code
+         }
 
 
-        try {
-            mymoduleSnare = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_snare.pt");
-        }
-        catch (const c10::Error& e) {
-            DBG("error"); //indicate error to calling code
-        }
+         try {
+             //mymoduleSnare=torch::jit::load("../src/scripted_modules/my_scripted_module_snare.pt");
+             juce::String snareString = modelsDir.getFullPathName() + "/my_scripted_module_snare.pt";
+             mymoduleSnare = torch::jit::load(snareString.toStdString());
+         }
+         catch (const c10::Error& e) {
+             DBG("error"); //indicate error to calling code
+         }
 
-        try {
-            mymoduleToms = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_toms.pt");
-        }
-        catch (const c10::Error& e) {
-            DBG("error"); //indicate error to calling code
-        }
+         try {
+             //mymoduleToms=torch::jit::load("../src/scripted_modules/my_scripted_module_toms.pt");
+             juce::String tomsString = modelsDir.getFullPathName() + "/my_scripted_module_toms.pt";
+             mymoduleToms = torch::jit::load(tomsString.toStdString());
+         }
+         catch (const c10::Error& e) {
+             DBG("error"); //indicate error to calling code
+         }
 
-        try {
-            mymoduleHihat = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_hihat.pt");
-        }
-        catch (const c10::Error& e) {
-            DBG("error"); //indicate error to calling code
-        }
+         try {
+             //mymoduleHihat=torch::jit::load("../src/scripted_modules/my_scripted_module_hihat.pt");
+             juce::String hihatString = modelsDir.getFullPathName() + "/my_scripted_module_hihat.pt";
+             mymoduleHihat = torch::jit::load(hihatString.toStdString());
+         }
+         catch (const c10::Error& e) {
+             DBG("error"); //indicate error to calling code
+         }
 
-        try {
-            mymoduleCymbals = torch::jit::load("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/src/scripted_modules/my_scripted_module_cymbals.pt");
-        }
-        catch (const c10::Error& e) {
-            DBG("error"); //indicate error to calling code
-        }
+         try {
+             //mymoduleCymbals=torch::jit::load("../src/scripted_modules/my_scripted_module_cymbals.pt");
+             juce::String cymbalsString = modelsDir.getFullPathName() + "/my_scripted_module_cymbals.pt";
+             mymoduleCymbals = torch::jit::load(cymbalsString.toStdString());
+         }
+         catch (const c10::Error& e) {
+             DBG("error"); //indicate error to calling code
+         }
 
         
 
@@ -1619,7 +1647,7 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yDownloadTensor, juce::Strin
             //playSourceKick.reset(memSourcePtr.get());
             //areaKick.setSrcInst(memSourcePtr.release());
 
-            ////displayOut(juce::File("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/wavs/testWavJuceKick.wav"), thumbnailKickOut);
+            ////displayOut(juce::File("../wavs/testWavJuceKick.wav"), thumbnailKickOut);
 
             //displayOut(bufferY,*thumbnailKickOut);
        
