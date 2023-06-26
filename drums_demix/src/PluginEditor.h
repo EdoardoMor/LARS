@@ -235,8 +235,8 @@ private:
     at::Tensor yCymbals;
 
 
-    //juce::Label textLabel;
-    bool separated {false};
+    juce::Label textLabel;
+    
 
     
     // This reference is provided as a quick way for your editor to

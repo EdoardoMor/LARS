@@ -17,6 +17,7 @@
 #include <cmath>
 #include <chrono>
 #include <thread>
+#include <chrono>
 
 //==============================================================================
 DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
@@ -37,11 +38,11 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     DBG(filesDir.getFullPathName());
 
     modelsDir = juce::File(juce::File::getSpecialLocation(juce::File::userDesktopDirectory).getFullPathName() + "/DrumsDemixUtils/DrumsDemixModels");
-    DBG("where the models at: ");
+    DBG("the models are in: ");
     DBG(modelsDir.getFullPathName());
 
     imagesDir = juce::File(juce::File::getSpecialLocation(juce::File::userDesktopDirectory).getFullPathName() + "/DrumsDemixUtils/DrumsDemixImages");
-    DBG("where the images at: ");
+    DBG("the images are in: ");
     DBG(imagesDir.getFullPathName());
 
 
@@ -72,7 +73,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
 
 
     //a text label to print some stuff
-    //addAndMakeVisible(textLabel);
+    addAndMakeVisible(textLabel);
 
     /*
     auto downloadIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/download.png"));
@@ -219,7 +220,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     
 
     //auto tomsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/toms.png"));
-    auto tomsImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/snare.png") );
+    auto tomsImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/toms.png") );
     imageToms.setImage(tomsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageToms);
 
@@ -358,7 +359,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
 DrumsDemixEditor::~DrumsDemixEditor()
 {
 
-    DBG("CHIUDOOOOO!!");
+    DBG("chiudo...");
     audioProcessor.transportProcessor.releaseResources();
     audioProcessor.transportProcessor.setSource(nullptr);
     delete thumbnail;
@@ -560,9 +561,9 @@ void DrumsDemixEditor::resized()
 
     areaFull.setBounds(10, (getHeight() / 9) + 10, getWidth() - 220, thumbnailHeight);
 
-    //textLabel.setBounds(10, 10 + thumbnailStartPoint + thumbnailHeight, getWidth() - 220, thumbnailHeight);
-    //textLabel.setFont(juce::Font(16.0f, juce::Font::bold)); 
-    //textLabel.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
+    textLabel.setBounds(10, 60 + thumbnailStartPoint + thumbnailHeight * 5, getWidth() - 220, thumbnailHeight);
+    textLabel.setFont(juce::Font(16.0f, juce::Font::bold)); 
+    textLabel.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
 
     downloadKickButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
     downloadSnareButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 20 + thumbnailStartPoint + thumbnailHeight * 2, buttonHeight, buttonHeight);
@@ -591,10 +592,12 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
     if (btn == &testButton) {
 
 
+        auto begin = std::chrono::high_resolution_clock::now();
         //***TAKE THE INPUT FROM THE MIXED DRUMS FILE***
 
 
         //-From Wav to AudiofileBuffer
+
 
         Utils utils = Utils();
         juce::AudioBuffer<float> fileAudiobuffer = getAudioBufferFromFile(myFile);
@@ -653,6 +656,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         //***INFER THE MODEL***
 
 
+
         InferModels(my_input, stftFilePhase, fileTensor.sizes()[1]);
 
 
@@ -667,7 +671,14 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         std::vector<at::Tensor> tensorList = {yKick, ySnare, yToms, yHihat, yCymbals};
         CreateWav(tensorList, inputFileName.dropLastCharacters(4));
 
-        separated == true;
+
+        auto end = std::chrono::high_resolution_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
+
+        DBG("TEMPO MISURATO (in ms): ");
+        DBG(std::to_string(elapsed.count()));
+
+        textLabel.setText(std::to_string(elapsed.count()), juce::dontSendNotification);
 
         //playKickButton.setEnabled(true);
         //playSnareButton.setEnabled(true);
@@ -725,7 +736,6 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
             DBG(juce::File::getSpecialLocation(juce::File::hostApplicationPath).getFullPathName());
             DBG(juce::File::getSpecialLocation(juce::File::tempDirectory).getFullPathName());
 
-            //textLabel.setText(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getFullPathName(), juce::dontSendNotification);
 
             /*
             auto parentDir = juce::File(docsDir.getFullPathName() + "/Che_Cartellona!");
@@ -1498,6 +1508,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
         /// RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
 
+         /*
          try {
              //mymoduleKick=torch::jit::load("../src/scripted_modules/my_scripted_module_kick.pt");
              juce::String kickString = modelsDir.getFullPathName() + "/my_scripted_module_kick.pt";
@@ -1544,6 +1555,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
              DBG("error"); //indicate error to calling code
          }
 
+         */
         
 
 }
