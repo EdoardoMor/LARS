@@ -1,4 +1,3 @@
-###   IL CmakeLists.tXt PIù GIUSTO FINO AD ORA!!! ###
 
 # Example Audio Plugin CMakeLists.txt
 
