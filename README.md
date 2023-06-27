@@ -10,11 +10,22 @@ MAE Capston project - a Drums Demixing plugin
 ## Description
 We present Drums-Demix, the first to-our-knowledge neural network-based commercial application for drum stems separation.
 
+## Requirements
+* CMake
+* Libtorch
+* Juce
+
 ## How to run it
 * Download/clone the project repo
-* Copy and paste the DrumsDemixUtils folder on your Desktop
-* Standalone position: build\drums_demix_artefacts\Debug\Standalone\drums_demix.exe
-* VST3 position:       build\drums_demix_artefacts\Debug\VST3\drums_demix.vst3\Contents\x86_64-win\drums_demix.vst3
+* In the CMakeLists.txt file, modify these lines typing in your paths to the libtorch and Juce folders:
+  * set(CMAKE_PREFIX_PATH "[your libtorch folder]")
+  * add_subdirectory([your JUCE folder] ./JUCE)
+* Copy and paste the DrumsDemixUtils folder on you Desktop
+* In the project folder:
+```console
+cmake -B build .
+```
+* Compile with the IDE of your preference and run the plug-in
 
 ## Functionalities
 * Load your drums stem file by:
