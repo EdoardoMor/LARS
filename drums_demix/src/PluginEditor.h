@@ -235,7 +235,7 @@ private:
     at::Tensor yCymbals;
 
 
-    juce::Label textLabel;
+    //juce::Label textLabel;
     
 
     

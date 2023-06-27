@@ -73,7 +73,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
 
 
     //a text label to print some stuff
-    addAndMakeVisible(textLabel);
+    //addAndMakeVisible(textLabel);
 
     /*
     auto downloadIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/download.png"));
@@ -390,7 +390,7 @@ DrumsDemixEditor::~DrumsDemixEditor()
     delete thumbnailCymbalsOut;
     delete thumbnailCacheCymbalsOut;
 
-    filesDir.deleteRecursively(false);
+    //filesDir.deleteRecursively(false);
 }
 
 //==============================================================================
@@ -561,9 +561,9 @@ void DrumsDemixEditor::resized()
 
     areaFull.setBounds(10, (getHeight() / 9) + 10, getWidth() - 220, thumbnailHeight);
 
-    textLabel.setBounds(10, 60 + thumbnailStartPoint + thumbnailHeight * 5, getWidth() - 220, thumbnailHeight);
-    textLabel.setFont(juce::Font(16.0f, juce::Font::bold)); 
-    textLabel.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
+    //textLabel.setBounds(10, 60 + thumbnailStartPoint + thumbnailHeight * 5, getWidth() - 220, thumbnailHeight);
+    //textLabel.setFont(juce::Font(16.0f, juce::Font::bold)); 
+    //textLabel.setColour(juce::Label::textColourId, juce::Colours::lightgreen);
 
     downloadKickButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 10 + thumbnailStartPoint + thumbnailHeight, buttonHeight, buttonHeight);
     downloadSnareButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 20 + thumbnailStartPoint + thumbnailHeight * 2, buttonHeight, buttonHeight);
@@ -678,7 +678,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         DBG("TEMPO MISURATO (in ms): ");
         DBG(std::to_string(elapsed.count()));
 
-        textLabel.setText(std::to_string(elapsed.count()), juce::dontSendNotification);
+        //textLabel.setText(std::to_string(elapsed.count()), juce::dontSendNotification);
 
         //playKickButton.setEnabled(true);
         //playSnareButton.setEnabled(true);
@@ -1508,7 +1508,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
         /// RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
 
-         /*
+         
          try {
              //mymoduleKick=torch::jit::load("../src/scripted_modules/my_scripted_module_kick.pt");
              juce::String kickString = modelsDir.getFullPathName() + "/my_scripted_module_kick.pt";
@@ -1555,7 +1555,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
              DBG("error"); //indicate error to calling code
          }
 
-         */
+         
         
 
 }
