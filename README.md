@@ -20,7 +20,7 @@ We present Drums-Demix, the first to-our-knowledge neural network-based commerci
 * In the CMakeLists.txt file, modify these lines typing in your paths to the libtorch and Juce folders:
   * set(CMAKE_PREFIX_PATH "[your libtorch folder]")
   * add_subdirectory([your JUCE folder] ./JUCE)
-* Copy and paste the DrumsDemixUtils folder on you Desktop
+* Copy and paste the DrumsDemixUtils folder on your Desktop
 * In the project folder:
 ```console
 cmake -B build .
@@ -28,7 +28,7 @@ cmake -B build .
 * Compile with the IDE of your preference and run the plug-in
 
 ## Functionalities
-* Load your drums stem file by:
+* Load your drums track file by:
   * Drag and dropping
   * Clicking the load button
 * Click the separate button and wait for the resulting stems of 5 different drum kit parts, which will be:
