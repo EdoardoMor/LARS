@@ -38,6 +38,6 @@ cmake -B build .
   * Hihat
   * Cymbals
 * Use the Play/Pause buttons and click on the waveforms to listen to the segment of the drum part you are more interested in
-* You can download the drum part stem in a .wav format in two different ways, by:
+* You can download the separated stems in a .wav format in two different ways, by:
   * Clicking the download button
   * Drag and dropping the file directly from the plug-in to anywhere you want!   
