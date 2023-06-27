@@ -32,7 +32,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
 
     //create system directory
     docsDir = juce::File::getSpecialLocation(juce::File::userMusicDirectory);
-    filesDir = juce::File(docsDir.getFullPathName() + "/FilesToDrop");
+    filesDir = juce::File(docsDir.getFullPathName() + "/DrumsDemixFilesToDrop");
     filesDir.createDirectory();
     DBG("the files you separate are in: ");
     DBG(filesDir.getFullPathName());
