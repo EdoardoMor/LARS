@@ -94,12 +94,12 @@ void DrumsDemixProcessor::changeProgramName (int index, const juce::String& newN
 //==============================================================================
 void DrumsDemixProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    if (playInput) { transportProcessor.prepareToPlay(samplesPerBlock, sampleRate); }
-    if (playKick) { transportProcessorKick.prepareToPlay(samplesPerBlock, sampleRate); }
-    if (playSnare) { transportProcessorSnare.prepareToPlay(samplesPerBlock, sampleRate); }
-    if (playToms) { transportProcessorToms.prepareToPlay(samplesPerBlock, sampleRate); }
-    if (playHihat) { transportProcessorHihat.prepareToPlay(samplesPerBlock, sampleRate); }
-    if (playCymbals) { transportProcessorCymbals.prepareToPlay(samplesPerBlock, sampleRate); }
+    transportProcessor.prepareToPlay(samplesPerBlock, sampleRate); 
+    transportProcessorKick.prepareToPlay(samplesPerBlock, sampleRate); 
+    transportProcessorSnare.prepareToPlay(samplesPerBlock, sampleRate); 
+    transportProcessorToms.prepareToPlay(samplesPerBlock, sampleRate); 
+    transportProcessorHihat.prepareToPlay(samplesPerBlock, sampleRate); 
+    transportProcessorCymbals.prepareToPlay(samplesPerBlock, sampleRate); 
 
 
 
@@ -167,7 +167,6 @@ void DrumsDemixProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
         // ..do something to the data...
     }
-    //transportProcessor.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer));
 
     if (playInput) { transportProcessor.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
     if (playKick) { transportProcessorKick.getNextAudioBlock(juce::AudioSourceChannelInfo(buffer)); }
