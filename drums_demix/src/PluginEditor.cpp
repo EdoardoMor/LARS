@@ -10,6 +10,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "Utils.cpp"
+#include <JuceHeader.h>
 
 
 #include <torch/torch.h>
@@ -72,16 +73,26 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     thumbnailCymbalsOut = new juce::AudioThumbnail(512, formatManager, *thumbnailCacheSnareOut);
 
 
-    //a text label to print some stuff on the vst3
+    //a text label to print some stuff
     //addAndMakeVisible(textLabel);
 
-    auto downloadIcon = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/download.png") );
-    auto playIcon = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/play.png") );
-    auto stopIcon = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/stop.png") );
-    auto separate = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/SEPARATE.png") );
+    /*
+    auto downloadIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/download.png"));
+    auto playIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/play.png"));
+    auto stopIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/stop.png"));
+    auto separate = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/SEPARATE.png"));
+    */
+
+
+
+    auto downloadIcon = juce::ImageFileFormat::loadFrom(BinaryData::download_png, BinaryData::download_pngSize);
+    auto playIcon = juce::ImageFileFormat::loadFrom(BinaryData::play_png, BinaryData::play_pngSize);
+    auto stopIcon = juce::ImageFileFormat::loadFrom(BinaryData::stop_png, BinaryData::stop_pngSize);
+    auto separate = juce::ImageFileFormat::loadFrom(BinaryData::SEPARATE_png, BinaryData::SEPARATE_pngSize);
 
     addAndMakeVisible(testButton);
     testButton.setImages(false, true, true, separate, 1.0, juce::Colour(), separate, 0.5, juce::Colour(), separate, 0.8, juce::Colour(), 0);
+    //testButton.setButtonText("SEPARATE");
     testButton.setEnabled(false);
     testButton.addListener(this);
 
@@ -113,11 +124,17 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     downloadCymbalsButton.addListener(this);
 
     addAndMakeVisible(playButton);
+    //playButton.setButtonText("PLAY");
+    //playButton.setEnabled(false);
     playButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
+    //playButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
     playButton.addListener(this);
 
     addAndMakeVisible(stopButton);
+    //stopButton.setButtonText("STOP");
+    //stopButton.setEnabled(false);
     stopButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
+    //stopButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopButton.addListener(this);
 
     //FULL DRUMS
@@ -127,16 +144,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaFull.setName("areaFull");
     
 
-    auto kitImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/kit.png") );
+    //auto kitImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/kit.png"));
+    auto kitImage = juce::ImageFileFormat::loadFrom(BinaryData::kit_png, BinaryData::kit_pngSize);
     imageKit.setImage(kitImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageKit);
       
     //KICK
     addAndMakeVisible(playKickButton);
+    //playKickButton.setButtonText("PLAY");
+    //playKickButton.setEnabled(false);
+    //playKickButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
     playKickButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playKickButton.addListener(this);
 
     addAndMakeVisible(stopKickButton);
+    //stopKickButton.setButtonText("STOP");
+    //stopKickButton.setEnabled(false);
+    //stopKickButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopKickButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopKickButton.addListener(this);
 
@@ -146,16 +170,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaKick.setName("areaKick");
     
 
-    auto kickImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/kick.png") );
+    //auto kickImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/kick.png"));
+    auto kickImage = juce::ImageFileFormat::loadFrom(BinaryData::kick_png, BinaryData::kick_pngSize);
     imageKick.setImage(kickImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageKick);
        
     //SNARE
     addAndMakeVisible(playSnareButton);
+    //playSnareButton.setButtonText("PLAY");
+    //playSnareButton.setEnabled(false);
+    //playSnareButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
     playSnareButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playSnareButton.addListener(this);
 
     addAndMakeVisible(stopSnareButton);
+    //stopSnareButton.setButtonText("STOP");
+    //stopSnareButton.setEnabled(false);
+    //stopSnareButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopSnareButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopSnareButton.addListener(this);
 
@@ -165,16 +196,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaSnare.setName("areaSnare");
     
 
-    auto snareImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/snare.png") );
+    //auto snareImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/snare.png"));
+    auto snareImage = juce::ImageFileFormat::loadFrom(BinaryData::snare_png, BinaryData::snare_pngSize);
     imageSnare.setImage(snareImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageSnare);
      
     //TOMS
     addAndMakeVisible(playTomsButton);
+    //playTomsButton.setButtonText("PLAY");
+    //playTomsButton.setEnabled(false);
+    //playTomsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
     playTomsButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playTomsButton.addListener(this);
 
     addAndMakeVisible(stopTomsButton);
+    //stopTomsButton.setButtonText("STOP");
+    //stopTomsButton.setEnabled(false);
+    //stopTomsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopTomsButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopTomsButton.addListener(this);
 
@@ -184,16 +222,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaToms.setName("areaToms");
     
 
-    auto tomsImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/toms.png") );
+    //auto tomsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/toms.png"));
+    auto tomsImage = juce::ImageFileFormat::loadFrom(BinaryData::toms_png, BinaryData::toms_pngSize);
     imageToms.setImage(tomsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageToms);
 
     //HIHAT
     addAndMakeVisible(playHihatButton);
+    //playHihatButton.setButtonText("PLAY");
+    //playHihatButton.setEnabled(false);
+    //playHihatButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
     playHihatButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playHihatButton.addListener(this);
 
     addAndMakeVisible(stopHihatButton);
+    //stopHihatButton.setButtonText("STOP");
+    //stopHihatButton.setEnabled(false);
+    //stopHihatButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopHihatButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopHihatButton.addListener(this);
 
@@ -203,16 +248,23 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaHihat.setName("areaHihat");
     
 
-    auto hihatImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/hihat.png") );
+    //auto hihatImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/hihat.png"));
+    auto hihatImage = juce::ImageFileFormat::loadFrom(BinaryData::hihat_png, BinaryData::hihat_pngSize);
     imageHihat.setImage(hihatImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageHihat);
             
     //CYMBALS
     addAndMakeVisible(playCymbalsButton);
+    //playCymbalsButton.setButtonText("PLAY");
+    //playCymbalsButton.setEnabled(false);
+    //playCymbalsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::green);
     playCymbalsButton.setImages(false, true, true, playIcon, 1.0, juce::Colour(), playIcon, 0.5, juce::Colour(), playIcon, 0.8, juce::Colour(), 0);
     playCymbalsButton.addListener(this);
 
     addAndMakeVisible(stopCymbalsButton);
+    //stopCymbalsButton.setButtonText("STOP");
+    //stopCymbalsButton.setEnabled(false);
+    //stopCymbalsButton.setColour(juce::TextButton::buttonColourId, juce::Colours::red);
     stopCymbalsButton.setImages(false, true, true, stopIcon, 1.0, juce::Colour(), stopIcon, 0.5, juce::Colour(), stopIcon, 0.8, juce::Colour(), 0);
     stopCymbalsButton.addListener(this);
 
@@ -222,12 +274,14 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     areaCymbals.setName("areaCymbals");
     
 
-    auto cymbalsImage = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/cymbals.png") );
+    //auto cymbalsImage = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/cymbals.png"));
+    auto cymbalsImage = juce::ImageFileFormat::loadFrom(BinaryData::cymbals_png, BinaryData::cymbals_pngSize);
     imageCymbals.setImage(cymbalsImage, juce::RectanglePlacement::stretchToFit);
     addAndMakeVisible(imageCymbals);
     
     //-----------------------------------------------------
-    auto browseIcon = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/browse.png") );
+    //auto browseIcon = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/browse.png"));
+    auto browseIcon = juce::ImageFileFormat::loadFrom(BinaryData::browse_png, BinaryData::browse_pngSize);
 
     addAndMakeVisible(openButton);
     openButton.setImages(false, true, true, browseIcon, 1.0, juce::Colour(), browseIcon, 0.5, juce::Colour(),browseIcon, 0.8, juce::Colour(), 0);
@@ -236,6 +290,7 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     formatManager.registerBasicFormats();
     audioProcessor.transportProcessorKick.addChangeListener(this);
     audioProcessor.transportProcessor.addChangeListener(this);
+    //audioProcessor.transportProcessorKick.addChangeListener(this);
     audioProcessor.transportProcessorSnare.addChangeListener(this);
     audioProcessor.transportProcessorToms.addChangeListener(this);
     audioProcessor.transportProcessorHihat.addChangeListener(this);
@@ -254,8 +309,13 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
         
 
     try{
-        juce::String kickString = modelsDir.getFullPathName() + "/my_scripted_module_kick.pt";
-        mymoduleKick = torch::jit::load(kickString.toStdString());
+        //mymoduleKick=torch::jit::load("../src/scripted_modules/my_scripted_module_kick.pt");
+        //juce::String kickString = modelsDir.getFullPathName() + "/my_scripted_module_kick.pt";
+        //mymoduleKick = torch::jit::load(kickString.toStdString());
+        std::stringstream modelStream;
+        modelStream.write(BinaryData::my_scripted_module_kick_pt, BinaryData::my_scripted_module_kick_ptSize);
+        mymoduleKick = torch::jit::load(modelStream);
+        //MemoryInputStream* input = new MemoryInputStream(BinaryData::my_scripted_module_kick_pt, BinaryData::my_scripted_module_kick_ptSize, false);
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -263,32 +323,48 @@ DrumsDemixEditor::DrumsDemixEditor (DrumsDemixProcessor& p)
     
 
     try{
-        juce::String snareString = modelsDir.getFullPathName() + "/my_scripted_module_snare.pt";
-        mymoduleSnare = torch::jit::load(snareString.toStdString());
+        //mymoduleSnare=torch::jit::load("../src/scripted_modules/my_scripted_module_snare.pt");
+        //juce::String snareString = modelsDir.getFullPathName() + "/my_scripted_module_snare.pt";
+        //mymoduleSnare = torch::jit::load(snareString.toStdString());
+        std::stringstream modelStream;
+        modelStream.write(BinaryData::my_scripted_module_snare_pt, BinaryData::my_scripted_module_snare_ptSize);
+        mymoduleSnare = torch::jit::load(modelStream);
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        juce::String tomsString = modelsDir.getFullPathName() + "/my_scripted_module_toms.pt";
-        mymoduleToms = torch::jit::load(tomsString.toStdString());
+        //mymoduleToms=torch::jit::load("../src/scripted_modules/my_scripted_module_toms.pt");
+        //juce::String tomsString = modelsDir.getFullPathName() + "/my_scripted_module_toms.pt";
+        //mymoduleToms = torch::jit::load(tomsString.toStdString());
+        std::stringstream modelStream;
+        modelStream.write(BinaryData::my_scripted_module_toms_pt, BinaryData::my_scripted_module_toms_ptSize);
+        mymoduleToms = torch::jit::load(modelStream);
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        juce::String hihatString = modelsDir.getFullPathName() + "/my_scripted_module_hihat.pt";
-        mymoduleHihat = torch::jit::load(hihatString.toStdString());
+        //mymoduleHihat=torch::jit::load("../src/scripted_modules/my_scripted_module_hihat.pt");
+        //juce::String hihatString = modelsDir.getFullPathName() + "/my_scripted_module_hihat.pt";
+        //mymoduleHihat = torch::jit::load(hihatString.toStdString());
+        std::stringstream modelStream;
+        modelStream.write(BinaryData::my_scripted_module_hihat_pt, BinaryData::my_scripted_module_hihat_ptSize);
+        mymoduleHihat = torch::jit::load(modelStream);
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
     }
 
     try{
-        juce::String cymbalsString = modelsDir.getFullPathName() + "/my_scripted_module_cymbals.pt";
-        mymoduleCymbals = torch::jit::load(cymbalsString.toStdString());
+        //mymoduleCymbals=torch::jit::load("../src/scripted_modules/my_scripted_module_cymbals.pt");
+        //juce::String cymbalsString = modelsDir.getFullPathName() + "/my_scripted_module_cymbals.pt";
+        //mymoduleCymbals = torch::jit::load(cymbalsString.toStdString());
+        std::stringstream modelStream;
+        modelStream.write(BinaryData::my_scripted_module_cymbals_pt, BinaryData::my_scripted_module_cymbals_ptSize);
+        mymoduleCymbals = torch::jit::load(modelStream);
     }
     catch(const c10::Error& e) {
         DBG("error"); //indicate error to calling code
@@ -340,10 +416,51 @@ DrumsDemixEditor::~DrumsDemixEditor()
 void DrumsDemixEditor::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
+    //g.setColour(juce::Colour::fromFloatRGBA(93, 90, 88, 255));
     g.fillAll(juce::Colour::fromRGB(93, 90, 88));
 
     background = juce::ImageCache::getFromFile(juce::File(imagesDir.getFullPathName() + "/LETTERING.png"));
     g.drawImageWithin(background, 5, 5, 380, 60, juce::RectanglePlacement::stretchToFit);
+    
+    //Background image
+    //background = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/DRUMS DEMIX.png"));
+    //background = juce::ImageCache::getFromFile( juce::File(imagesDir.getFullPathName() + "/DRUMS DEMIX.png") );
+    
+    /*
+    if (paintOut)
+    {
+
+        juce::Path p;
+        auto ratio = bufferOut.getNumSamples() / getWidth();
+        const float* buffer = bufferOut.getReadPointer(0);
+        DBG("entrato");
+
+        for (int sample = 0; sample < bufferOut.getNumSamples(); sample += ratio)
+        {
+            DBG(buffer[sample]);
+            audioPoints.push_back(buffer[sample]);
+        }
+        DBG(audioPoints.size());
+
+        DBG("uscito");
+
+        p.startNewSubPath(10, (60 + ((getHeight() - 200) / 2) + ((getHeight() - 200) / 2) / 2));
+
+        for (int sample = 0; sample < audioPoints.size(); ++sample)
+        {
+            auto point = juce::jmap<float>(audioPoints[sample], -1.0f, 1.0f, (60 + (getHeight() - 200) / 2) + ((getHeight() - 200) / 2) / 2 + 100, (60 + (getHeight() - 200) / 2) + ((getHeight() - 200) / 2) / 2 - 100);
+            //auto point = juce::jmap<float>(audioPoints[sample], -1.0f, 1.0f, (20 + (getHeight() - 200) / 2) + ((getHeight() - 200) / 2) / 2 + (((getHeight() - 200) / 2)), (((getHeight() - 200) / 2) / 2) + 40);
+            p.lineTo(sample, point);
+
+        }
+
+        g.strokePath(p, juce::PathStrokeType(2));
+        paintOut = false;
+    }
+     */
+   // g.setColour (juce::Colours::white);
+   // g.setFont (15.0f);
+   // g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
     
     //VISUALIZER
 
@@ -410,7 +527,6 @@ void DrumsDemixEditor::paint(juce::Graphics& g)
                paintIfFileLoaded(g, thumbnailBoundsCymbalsOut, *thumbnailCymbalsOut, juce::Colour(180, 182, 145));
                paintCursorCymbals(g, thumbnailBoundsCymbalsOut, *thumbnailCymbalsOut, juce::Colour(180, 182, 145));
            }
-
     
 }
 
@@ -481,6 +597,7 @@ void DrumsDemixEditor::resized()
 
 juce::AudioBuffer<float> DrumsDemixEditor::getAudioBufferFromFile(juce::File file)
 {
+    //juce::AudioFormatManager formatManager - declared in header...`;
     auto* reader = formatManager.createReaderFor(file);
     juce::AudioBuffer<float> audioBuffer;
     audioBuffer.setSize(reader->numChannels, reader->lengthInSamples);
@@ -496,7 +613,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
     if (btn == &testButton) {
 
 
-        auto begin = std::chrono::high_resolution_clock::now();
+        //auto begin = std::chrono::high_resolution_clock::now();
         //***TAKE THE INPUT FROM THE MIXED DRUMS FILE***
 
 
@@ -536,6 +653,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
         stftFileMag = torch::unsqueeze(stftFileMag, 0);
 
+        //stftFilePhase = torch::unsqueeze(stftFilePhase, 0);
 
         DBG("stftFileMag sizes: ");
         DBG(stftFileMag.sizes()[0]);
@@ -548,6 +666,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         DBG(stftFilePhase.sizes()[0]);
         DBG(stftFilePhase.sizes()[1]);
         DBG(stftFilePhase.sizes()[2]);
+        //DBG(stftFilePhase.sizes()[3]);
 
 
         //-From stft Tensor to IValue
@@ -574,12 +693,19 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         CreateWav(tensorList, inputFileName.dropLastCharacters(4));
 
 
-        auto end = std::chrono::high_resolution_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
+        //auto end = std::chrono::high_resolution_clock::now();
+        //auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
 
-        DBG("TEMPO MISURATO (in ms): ");
-        DBG(std::to_string(elapsed.count()));
+        //DBG("TEMPO MISURATO (in ms): ");
+        //DBG(std::to_string(elapsed.count()));
 
+        //textLabel.setText(std::to_string(elapsed.count()), juce::dontSendNotification);
+
+        //playKickButton.setEnabled(true);
+        //playSnareButton.setEnabled(true);
+        //playTomsButton.setEnabled(true);
+        //playHihatButton.setEnabled(true);
+        //playCymbalsButton.setEnabled(true);
              
 
     }
@@ -589,6 +715,7 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
         if (chooser.browseForFileToOpen())
         {
+            //juce::File myFile;
             myFile = chooser.getResult();
             inputFileName = chooser.getResult().getFileName();
 
@@ -604,11 +731,10 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
             if (reader != nullptr)
             {
-                
+
                 std::unique_ptr<juce::AudioFormatReaderSource> tempSource(new juce::AudioFormatReaderSource(reader, true));
 
                 audioProcessor.transportProcessor.setSource(tempSource.get());
-                //textLabel.setText(juce::String((*(tempSource.get())).getTotalLength()), juce::dontSendNotification);
                 transportStateChanged(Stopped, "input");
 
                 playSource.reset(tempSource.get());
@@ -620,12 +746,21 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
             }
             DBG("openbuttonclicked");
             testButton.setEnabled(true);
+            //playButton.setEnabled(true);
 
             auto docsDir = juce::File::getSpecialLocation(juce::File::userMusicDirectory);
 
             DBG(docsDir.getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::currentExecutableFile).getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::currentApplicationFile).getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::invokedExecutableFile).getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::hostApplicationPath).getFullPathName());
+            DBG(juce::File::getSpecialLocation(juce::File::tempDirectory).getFullPathName());
 
 
+            /*
+            auto parentDir = juce::File(docsDir.getFullPathName() + "/Che_Cartellona!");
+            parentDir.createDirectory(); */
 
 
         }
@@ -716,12 +851,16 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
 
         transportStateChanged(Starting, "input");
         DBG("playbuttonclicked");
+        //playButton.setEnabled(false);
+        //stopButton.setEnabled(true);
         
 
     }
     if (btn == &stopButton){
         transportStateChanged(Stopping, "input");
         DBG("stopbuttonclicked");
+        //playButton.setEnabled(true);
+        //stopButton.setEnabled(false);
 
     }
 
@@ -735,16 +874,21 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         audioProcessor.playCymbals = false;
         transportStateChanged(Starting, "kick");
         DBG("playbuttonclicked");
+        //playButton.setEnabled(false);
+        //stopButton.setEnabled(true);
 
 
     }
     if (btn == &stopKickButton) {
         transportStateChanged(Stopping, "kick");
         DBG("stopbuttonclicked");
+        //playButton.setEnabled(true);
+        //stopButton.setEnabled(false);
 
     }
 
     if (btn == &playSnareButton) {
+        //audioProcessor.transportProcessorSnare.setPosition(0.0);
         audioProcessor.playInput = false;
         audioProcessor.playKick = false;
         audioProcessor.playSnare = true;
@@ -753,12 +897,16 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         audioProcessor.playCymbals = false;
         transportStateChanged(Starting, "snare");
         DBG("playbuttonclicked");
+        //playButton.setEnabled(false);
+        //stopButton.setEnabled(true);
 
 
     }
     if (btn == &stopSnareButton) {
         transportStateChanged(Stopping, "snare");
         DBG("stopbuttonclicked");
+        //playButton.setEnabled(true);
+        //stopButton.setEnabled(false);
 
     }
 
@@ -771,12 +919,16 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         audioProcessor.playCymbals = false;
         transportStateChanged(Starting, "tom");
         DBG("playbuttonclicked");
+        //playButton.setEnabled(false);
+        //stopButton.setEnabled(true);
 
 
     }
     if (btn == &stopTomsButton) {
         transportStateChanged(Stopping, "tom");
         DBG("stopbuttonclicked");
+        //playButton.setEnabled(true);
+        //stopButton.setEnabled(false);
 
     }
 
@@ -790,12 +942,16 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         audioProcessor.playCymbals = false;
         transportStateChanged(Starting, "hihat");
         DBG("playbuttonclicked");
+        //playButton.setEnabled(false);
+        //stopButton.setEnabled(true);
 
 
     }
     if (btn == &stopHihatButton) {
         transportStateChanged(Stopping, "hihat");
         DBG("stopbuttonclicked");
+        //playButton.setEnabled(true);
+        //stopButton.setEnabled(false);
 
     }
 
@@ -808,12 +964,16 @@ void DrumsDemixEditor::buttonClicked(juce::Button* btn)
         audioProcessor.playCymbals = true;
         transportStateChanged(Starting, "cymbals");
         DBG("playbuttonclicked");
+        //playButton.setEnabled(false);
+        //stopButton.setEnabled(true);
 
 
     }
     if (btn == &stopCymbalsButton) {
         transportStateChanged(Stopping, "cymbals");
         DBG("stopbuttonclicked");
+        //playButton.setEnabled(true);
+        //stopButton.setEnabled(false);
 
     }
 
@@ -833,14 +993,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessor.setPosition(0.0);
+                //playButton.setEnabled(true);
+                //stopButton.setEnabled(false);
                 break;
             case Starting:
-                //textLabel.setText("si suona!", juce::dontSendNotification);
+                //stopButton.setEnabled(true);
+                //playButton.setEnabled(false);
                 audioProcessor.transportProcessor.start();
                 break;
             case Playing:
+                //stopButton.setEnabled(true);
                 break;
             case Stopping:
+                //stopButton.setEnabled(false);
+                //playButton.setEnabled(true);
                 audioProcessor.transportProcessor.stop();
                 break;
             }
@@ -857,13 +1023,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorKick.setPosition(0.0);
+                //playKickButton.setEnabled(true);
+                //stopKickButton.setEnabled(false);
                 break;
             case Starting:
+                //stopKickButton.setEnabled(true);
+                //playKickButton.setEnabled(false);
                 audioProcessor.transportProcessorKick.start();
                 break;
             case Playing:
+                //stopKickButton.setEnabled(true);
                 break;
             case Stopping:
+                //stopKickButton.setEnabled(false);
+                //playKickButton.setEnabled(true);
                 audioProcessor.transportProcessorKick.stop();
                 break;
             }
@@ -880,13 +1053,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorSnare.setPosition(0.0);
+                //playSnareButton.setEnabled(true);
+                //stopSnareButton.setEnabled(false);
                 break;
             case Starting:
+                //stopSnareButton.setEnabled(true);
+                //playSnareButton.setEnabled(false);
                 audioProcessor.transportProcessorSnare.start();
                 break;
             case Playing:
+                //stopSnareButton.setEnabled(true);
                 break;
             case Stopping:
+                //stopSnareButton.setEnabled(false);
+                //playSnareButton.setEnabled(true);
                 audioProcessor.transportProcessorSnare.stop();
                 break;
             }
@@ -903,13 +1083,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorToms.setPosition(0.0);
+                //playTomsButton.setEnabled(true);
+                //stopTomsButton.setEnabled(false);
                 break;
             case Starting:
+                //stopTomsButton.setEnabled(true);
+                //playTomsButton.setEnabled(false);
                 audioProcessor.transportProcessorToms.start();
                 break;
             case Playing:
+                //stopTomsButton.setEnabled(true);
                 break;
             case Stopping:
+                //stopTomsButton.setEnabled(false);
+                //playTomsButton.setEnabled(true);
                 audioProcessor.transportProcessorToms.stop();
                 break;
             }
@@ -926,13 +1113,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorHihat.setPosition(0.0);
+                //playHihatButton.setEnabled(true);
+                //stopHihatButton.setEnabled(false);
                 break;
             case Starting:
+                //stopHihatButton.setEnabled(true);
+                //playHihatButton.setEnabled(false);
                 audioProcessor.transportProcessorHihat.start();
                 break;
             case Playing:
+                //stopHihatButton.setEnabled(true);
                 break;
             case Stopping:
+                //stopHihatButton.setEnabled(false);
+                //playHihatButton.setEnabled(true);
                 audioProcessor.transportProcessorHihat.stop();
                 break;
             }
@@ -949,13 +1143,20 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
             {
             case Stopped:
                 audioProcessor.transportProcessorCymbals.setPosition(0.0);
+                //playCymbalsButton.setEnabled(true);
+                //stopCymbalsButton.setEnabled(false);
                 break;
             case Starting:
+                //stopCymbalsButton.setEnabled(true);
+                //playCymbalsButton.setEnabled(false);
                 audioProcessor.transportProcessorCymbals.start();
                 break;
             case Playing:
+                //stopCymbalsButton.setEnabled(true);
                 break;
             case Stopping:
+                //stopCymbalsButton.setEnabled(false);
+                //playCymbalsButton.setEnabled(true);
                 audioProcessor.transportProcessorCymbals.stop();
                 break;
             }
@@ -966,6 +1167,8 @@ void DrumsDemixEditor::transportStateChanged(TransportState newState, juce::Stri
 
 void DrumsDemixEditor::displayOut(juce::AudioBuffer<float>& buffer, juce::AudioThumbnail& thumbnailOut)
 {
+    //juce::MemoryAudioSource input(buffer, true, false);
+    //std::this_thread::sleep_for(std::chrono::milliseconds(10000));
 
     thumbnailOut.reset(buffer.getNumChannels(), 44100, buffer.getNumSamples());
     thumbnailOut.addBlock(0, buffer, 0, buffer.getNumSamples());
@@ -1091,6 +1294,43 @@ void DrumsDemixEditor::paintIfFileLoaded (juce::Graphics& g, const juce::Rectang
                              1.0f);  // vertical zoom
 
      g.setColour(juce::Colours::lightgrey);
+
+     //if (audioProcessor.playInput) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessor.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)(getHeight() / 9) + 10, drawPosition,
+     //        (float)(getHeight() / 9) + 10 + thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playKick) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorKick.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)10 + thumbnailStartPoint + thumbnailHeight, drawPosition,
+     //        (float)10 + thumbnailStartPoint + thumbnailHeight +thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playSnare) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorSnare.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)20 + thumbnailStartPoint + thumbnailHeight * 2, drawPosition,
+     //        (float)20 + thumbnailStartPoint + thumbnailHeight * 2 +thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playToms) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorToms.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)30 + thumbnailStartPoint + thumbnailHeight * 3, drawPosition,
+     //        (float)30 + thumbnailStartPoint + thumbnailHeight * 3 +thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playHihat) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorHihat.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)40 + thumbnailStartPoint + thumbnailHeight * 4, drawPosition,
+     //        (float)40 + thumbnailStartPoint + thumbnailHeight * 4 + thumbnailHeight, 1.0f);
+     //}
+     //if (audioProcessor.playCymbals) {
+     //    auto audioPosition = (float)audioProcessor.transportProcessorCymbals.getCurrentPosition();
+     //    auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+     //    g.drawLine(drawPosition, (float)50 + thumbnailStartPoint + thumbnailHeight * 5, drawPosition,
+     //        (float)50 + thumbnailStartPoint + thumbnailHeight * 5 + thumbnailHeight, 1.0f);
+     //}
 
  }
 
@@ -1218,7 +1458,6 @@ void DrumsDemixEditor::loadFile(const juce::String& path)
         std::unique_ptr<juce::AudioFormatReaderSource> tempSource(new juce::AudioFormatReaderSource(reader, true));
 
         audioProcessor.transportProcessor.setSource(tempSource.get());
-        //textLabel.setText( juce::String((*(tempSource.get())).getTotalLength()), juce::dontSendNotification);
         transportStateChanged(Stopped, "input");
 
         playSource.reset(tempSource.get());
@@ -1236,6 +1475,7 @@ void DrumsDemixEditor::loadFile(const juce::String& path)
 
 void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, torch::Tensor phase, int size) 
 {
+    //c10::InferenceMode guard(true);
     DBG("Infering the Models...");
     Utils utils = Utils();
     //***INFER THE MODEL***
@@ -1244,7 +1484,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         //-Forward
         at::Tensor outputsKick = mymoduleKick.forward(my_input).toTensor();
 
-        // COMMENT IF PERFORMING QUICK DEBUGGING
+        // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
          at::Tensor outputsSnare = mymoduleSnare.forward(my_input).toTensor();
          at::Tensor outputsToms = mymoduleToms.forward(my_input).toTensor();
          at::Tensor outputsHihat = mymoduleHihat.forward(my_input).toTensor();
@@ -1257,11 +1497,12 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         DBG(outputsKick.sizes()[0]);
         DBG(outputsKick.sizes()[1]);
         DBG(outputsKick.sizes()[2]);
+        //DBG(outputs.sizes()[3]);
 
 
 
 
-        // COMMENT IF PERFORMING QUICK DEBUGGING
+        // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
          outputsSnare = torch::squeeze(outputsSnare, 0);
          outputsToms = torch::squeeze(outputsToms, 0);
          outputsHihat = torch::squeeze(outputsHihat, 0);
@@ -1277,7 +1518,7 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         DBG(yKick.sizes()[1]);
 
 
-        // COMMENT IF PERFORMING QUICK DEBUGGING
+        // COMMENTA PER AUMENTARE LA RUNTIME SPEED PER QUICK DEBUGGING
         
          ySnare = utils.batch_istft(outputsSnare, phase, size);
          yToms = utils.batch_istft(outputsToms, phase, size);
@@ -1286,12 +1527,17 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
         
 
 
-        /// RELOAD THE MODELS
+        /// RELOADARE I MODELLI E' UN MODO PER NON FAR CRASHARE AL SECONDO SEPARATE CONSECUTIVO, MA FORSE NON IL MIGLIOR MODO! (RALLENTA UN PO')
 
          
          try {
-             juce::String kickString = modelsDir.getFullPathName() + "/my_scripted_module_kick.pt";
-             mymoduleKick = torch::jit::load(kickString.toStdString());
+             //mymoduleKick=torch::jit::load("../src/scripted_modules/my_scripted_module_kick.pt");
+             //juce::String kickString = modelsDir.getFullPathName() + "/my_scripted_module_kick.pt";
+             //mymoduleKick = torch::jit::load(kickString.toStdString());
+             std::stringstream modelStream;
+             modelStream.write(BinaryData::my_scripted_module_kick_pt, BinaryData::my_scripted_module_kick_ptSize);
+             mymoduleKick = torch::jit::load(modelStream);
+             //MemoryInputStream* input = new MemoryInputStream(BinaryData::my_scripted_module_kick_pt, BinaryData::my_scripted_module_kick_ptSize, false);
          }
          catch (const c10::Error& e) {
              DBG("error"); //indicate error to calling code
@@ -1299,32 +1545,48 @@ void DrumsDemixEditor::InferModels(std::vector<torch::jit::IValue> my_input, tor
 
 
          try {
-             juce::String snareString = modelsDir.getFullPathName() + "/my_scripted_module_snare.pt";
-             mymoduleSnare = torch::jit::load(snareString.toStdString());
+             //mymoduleSnare=torch::jit::load("../src/scripted_modules/my_scripted_module_snare.pt");
+             //juce::String snareString = modelsDir.getFullPathName() + "/my_scripted_module_snare.pt";
+             //mymoduleSnare = torch::jit::load(snareString.toStdString());
+             std::stringstream modelStream;
+             modelStream.write(BinaryData::my_scripted_module_snare_pt, BinaryData::my_scripted_module_snare_ptSize);
+             mymoduleSnare = torch::jit::load(modelStream);
          }
          catch (const c10::Error& e) {
              DBG("error"); //indicate error to calling code
          }
 
          try {
-             juce::String tomsString = modelsDir.getFullPathName() + "/my_scripted_module_toms.pt";
-             mymoduleToms = torch::jit::load(tomsString.toStdString());
+             //mymoduleToms=torch::jit::load("../src/scripted_modules/my_scripted_module_toms.pt");
+             //juce::String tomsString = modelsDir.getFullPathName() + "/my_scripted_module_toms.pt";
+             //mymoduleToms = torch::jit::load(tomsString.toStdString());
+             std::stringstream modelStream;
+             modelStream.write(BinaryData::my_scripted_module_toms_pt, BinaryData::my_scripted_module_toms_ptSize);
+             mymoduleToms = torch::jit::load(modelStream);
          }
          catch (const c10::Error& e) {
              DBG("error"); //indicate error to calling code
          }
 
          try {
-             juce::String hihatString = modelsDir.getFullPathName() + "/my_scripted_module_hihat.pt";
-             mymoduleHihat = torch::jit::load(hihatString.toStdString());
+             //mymoduleHihat=torch::jit::load("../src/scripted_modules/my_scripted_module_hihat.pt");
+             //juce::String hihatString = modelsDir.getFullPathName() + "/my_scripted_module_hihat.pt";
+             //mymoduleHihat = torch::jit::load(hihatString.toStdString());
+             std::stringstream modelStream;
+             modelStream.write(BinaryData::my_scripted_module_hihat_pt, BinaryData::my_scripted_module_hihat_ptSize);
+             mymoduleHihat = torch::jit::load(modelStream);
          }
          catch (const c10::Error& e) {
              DBG("error"); //indicate error to calling code
          }
 
          try {
-             juce::String cymbalsString = modelsDir.getFullPathName() + "/my_scripted_module_cymbals.pt";
-             mymoduleCymbals = torch::jit::load(cymbalsString.toStdString());
+             //mymoduleCymbals=torch::jit::load("../src/scripted_modules/my_scripted_module_cymbals.pt");
+             //juce::String cymbalsString = modelsDir.getFullPathName() + "/my_scripted_module_cymbals.pt";
+             //mymoduleCymbals = torch::jit::load(cymbalsString.toStdString());
+             std::stringstream modelStream;
+             modelStream.write(BinaryData::my_scripted_module_cymbals_pt, BinaryData::my_scripted_module_cymbals_ptSize);
+             mymoduleCymbals = torch::jit::load(modelStream);
          }
          catch (const c10::Error& e) {
              DBG("error"); //indicate error to calling code
@@ -1538,6 +1800,7 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yDownloadTensor, juce::Strin
 
         //-Create the stereo AudioBuffer
         juce::AudioBuffer<float> bufferY = juce::AudioBuffer<float>(dataPtrs, 2, yDownloadTensor.sizes()[1]); //need to change last argument to let it be dynamic!
+        //bufferOut = juce::AudioBuffer<float>(dataPtrsOut, 2, yKickTensor.sizes()[1]);
 
         //-Print Wav
         juce::WavAudioFormat formatWav;
@@ -1552,6 +1815,19 @@ void DrumsDemixEditor::CreateWavQuick(torch::Tensor yDownloadTensor, juce::Strin
             if (writerY != nullptr)
                 writerY->writeFromAudioSampleBuffer(bufferY, 0, bufferY.getNumSamples());
 
+            //std::unique_ptr<juce::MemoryAudioSource> memSourcePtr(new juce::MemoryAudioSource(bufferY, true, false));
+
+
+            //audioProcessor.transportProcessorKick.setSource(memSourcePtr.get());
+            //transportStateChanged(Stopped, "kick");
+
+
+            //playSourceKick.reset(memSourcePtr.get());
+            //areaKick.setSrcInst(memSourcePtr.release());
+
+            ////displayOut(juce::File("../wavs/testWavJuceKick.wav"), thumbnailKickOut);
+
+            //displayOut(bufferY,*thumbnailKickOut);
        
 
         DBG("wav scritto!");

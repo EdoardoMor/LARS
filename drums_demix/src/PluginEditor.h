@@ -52,7 +52,9 @@ public:
 
     juce::AudioBuffer<float> getAudioBufferFromFile(juce::File file);
     
+    //juce::File Absolute = juce::File("/Users/alessandroorsatti/Documents/GitHub/DrumsDemix/drums_demix");
     juce::File absolutePath = juce::File::getCurrentWorkingDirectory().getParentDirectory();
+    //juce::String Path = Absolute.getFullPathName();
 
 
 
@@ -210,6 +212,7 @@ private:
 
     std::vector<float> audioPoints;
     
+    //audioPoints.call_back(new float (args));
     bool paintOut{ false };
 
     void timerCallback() override
@@ -217,7 +220,7 @@ private:
         repaint();
     }
     
-    //TorchScript modules:
+    //load TorchScript modules:
     torch::jit::script::Module mymoduleKick;
     torch::jit::script::Module mymoduleSnare;
     torch::jit::script::Module mymoduleToms;
@@ -231,7 +234,7 @@ private:
     at::Tensor yHihat;
     at::Tensor yCymbals;
 
-    // a label used for printing when the plug in is open into a DAW as a vst3
+
     //juce::Label textLabel;
     
 
