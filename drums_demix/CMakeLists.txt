@@ -15,20 +15,20 @@ cmake_minimum_required(VERSION 3.15)
 # `project()` command. `project()` sets up some helpful variables that describe source/binary
 # directories, and the current project version. This is a standard CMake command.
 
-project(drums_demix VERSION 0.0.1)
+project(LARS VERSION 0.0.1)
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
 # included JUCE directly in your source tree (perhaps as a submodule), you'll need to tell CMake to
 # include that subdirectory as part of the build.
 
-set(CMAKE_PREFIX_PATH "C:/LibTorch/libtorch-debug") # location of libtorch
+set(CMAKE_PREFIX_PATH "/Users/alessandroorsatti/Documents/libtorch") # location of libtorch
 find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 # find_package(JUCE CONFIG REQUIRED)        # If you've installed JUCE to your system
 # or
-add_subdirectory(C:/Juce/JUCE ./JUCE)                    # If you've put JUCE in a subdirectory called JUCE
+add_subdirectory(/Users/alessandroorsatti/Documents/JUCE ./JUCE)                    # If you've put JUCE in a subdirectory called JUCE
 
 # If you are building a VST2 or AAX plugin, CMake needs to be told where to find these SDKs on your
 # system. This setup should be done before calling `juce_add_plugin`.
@@ -42,7 +42,7 @@ add_subdirectory(C:/Juce/JUCE ./JUCE)                    # If you've put JUCE in
 # the formats specified by the FORMATS arguments. This function accepts many optional arguments.
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 
-juce_add_plugin(drums_demix
+juce_add_plugin(LARS
     # VERSION ...                               # Set this if the plugin version is different to the project version
     # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
     # ICON_SMALL ...
@@ -58,7 +58,7 @@ juce_add_plugin(drums_demix
     PLUGIN_CODE Drdx                            # A unique four-character plugin id with exactly one upper-case character
                                                 # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
     FORMATS AU VST3 Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-    PRODUCT_NAME "drums_demix")        # The name of the final executable, which can differ from the target name
+    PRODUCT_NAME "LARS")        # The name of the final executable, which can differ from the target name
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
@@ -66,14 +66,14 @@ juce_add_plugin(drums_demix
 # include all your JUCE module headers; if you're happy to include module headers directly, you
 # probably don't need to call this.
 
-juce_generate_juce_header(drums_demix)
+juce_generate_juce_header(LARS)
 
 # `target_sources` adds source files to a target. We pass the target that needs the sources as the
 # first argument, then a visibility parameter for the sources which should normally be PRIVATE.
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
 
-target_sources(drums_demix
+target_sources(LARS
     PRIVATE
     src/PluginEditor.cpp
     src/PluginProcessor.cpp
@@ -90,7 +90,7 @@ target_sources(drums_demix
 # definitions will be visible both to your code, and also the JUCE module code, so for new
 # definitions, pick unique names that are unlikely to collide! This is a standard CMake command.
 
-target_compile_definitions(drums_demix
+target_compile_definitions(LARS
     PUBLIC # 
         JUCE_ALSA=1
         JUCE_DIRECTSOUND=1
@@ -120,31 +120,59 @@ target_compile_definitions(drums_demix
 # dependencies are resolved automatically, so `juce_core`, `juce_events` and so on will also be
 # linked automatically. If we'd generated a binary data target above, we would need to link to it
 # here too. This is a standard CMake command.
+juce_add_binary_data(LARS_data
+        SOURCES
+        Resources/toms.png
+        Resources/stop.png
+        Resources/snare.png
+        Resources/separate1.png
+        Resources/SEPARATE.png
+        Resources/my_scripted_module.pt
+        Resources/play.png
+        Resources/my_scripted_module_toms.pt
+        Resources/my_scripted_module_snare.pt
+        Resources/my_scripted_module_hihat.pt
+        Resources/my_scripted_module_kick.pt
+        Resources/my_scripted_module_cymbals.pt
+        Resources/LETTERING.png
+        Resources/kit.png
+        Resources/kick.png
+        Resources/hihat.png
+        Resources/download2.png
+        Resources/download.png
+        Resources/DD_GUI.png
+        Resources/cymbals.png
+        Resources/browse2.png
+        Resources/browse.png
+        Resources/background.png
+        Resources/5.png
+)
 
-
-target_link_libraries(drums_demix
+target_link_libraries(LARS
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
+        LARS_data
         juce::juce_audio_utils
         "${TORCH_LIBRARIES}"
 
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
-        juce::juce_recommended_warning_flags)
+        juce::juce_recommended_warning_flags
+        )
 
 
 # The following code block is suggested to be used on Windows.
 # According to https://github.com/pytorch/pytorch/issues/25457,
 # the DLLs need to be copied to avoid memory errors.
-
+    
 if (MSVC)
     file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
-    add_custom_command(TARGET drums_demix_Standalone
+    add_custom_command(TARGET LARS_Standalone
                         POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E copy_if_different
                         ${TORCH_DLLS}
-                        $<TARGET_FILE_DIR:drums_demix_Standalone>)
+                        $<TARGET_FILE_DIR:LARS_Standalone>)
 endif (MSVC)
 
 add_executable(test_nn
