@@ -385,7 +385,7 @@ DrumsDemixEditor::DrumsDemixEditor(DrumsDemixProcessor& p)
 DrumsDemixEditor::~DrumsDemixEditor()
 {
 
-    DBG("chiudo...");
+    DBG("chiudo....");
     audioProcessor.transportProcessor.releaseResources();
     audioProcessor.transportProcessor.setSource(nullptr);
     delete thumbnail;
@@ -1364,66 +1364,67 @@ void DrumsDemixEditor::paintIfFileLoaded(juce::Graphics& g, const juce::Rectangl
 }
 
 void DrumsDemixEditor::paintCursorInput(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
-    auto audioLength = (float)thumbnailWav.getTotalLength();
+    auto audioLength = areaFull.getAudioLength();
     float thumbnailHeight = (getHeight() - 200) / 5;
     float thumbnailStartPoint = (getHeight() / 9) + 10;
     g.setColour(juce::Colours::lightgrey);
-    auto audioPosition = (float)audioProcessor.transportProcessor.getCurrentPosition();
+    auto audioPosition = (float)audioProcessor.transportProcessor.getNextReadPosition();
     auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
+
     g.drawLine(drawPosition, (float)(getHeight() / 9) + 10, drawPosition,
         (float)(getHeight() / 9) + 10 + thumbnailHeight, 1.0f);
 }
 
 void DrumsDemixEditor::paintCursorKick(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
-    auto audioLength = (float)thumbnailWav.getTotalLength();
+    auto audioLength = areaKick.getAudioLength();
     float thumbnailHeight = (getHeight() - 200) / 5;
     float thumbnailStartPoint = (getHeight() / 9) + 10;
     g.setColour(juce::Colours::lightgrey);
-    auto audioPosition = (float)audioProcessor.transportProcessorKick.getCurrentPosition();
+    auto audioPosition = (float)audioProcessor.transportProcessorKick.getNextReadPosition();
     auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
     g.drawLine(drawPosition, (float)10 + thumbnailStartPoint + thumbnailHeight, drawPosition,
         (float)10 + thumbnailStartPoint + thumbnailHeight + thumbnailHeight, 1.0f);
 }
 
 void DrumsDemixEditor::paintCursorSnare(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
-    auto audioLength = (float)thumbnailWav.getTotalLength();
+    auto audioLength = areaSnare.getAudioLength();
     float thumbnailHeight = (getHeight() - 200) / 5;
     float thumbnailStartPoint = (getHeight() / 9) + 10;
     g.setColour(juce::Colours::lightgrey);
-    auto audioPosition = (float)audioProcessor.transportProcessorSnare.getCurrentPosition();
+    auto audioPosition = (float)audioProcessor.transportProcessorSnare.getNextReadPosition();
     auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
     g.drawLine(drawPosition, (float)20 + thumbnailStartPoint + thumbnailHeight * 2, drawPosition,
         (float)20 + thumbnailStartPoint + thumbnailHeight * 2 + thumbnailHeight, 1.0f);
 }
 
 void DrumsDemixEditor::paintCursorToms(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
-    auto audioLength = (float)thumbnailWav.getTotalLength();
+    auto audioLength = areaToms.getAudioLength();
     float thumbnailHeight = (getHeight() - 200) / 5;
     float thumbnailStartPoint = (getHeight() / 9) + 10;
     g.setColour(juce::Colours::lightgrey);
-    auto audioPosition = (float)audioProcessor.transportProcessorToms.getCurrentPosition();
+    auto audioPosition = (float)audioProcessor.transportProcessorToms.getNextReadPosition();
     auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
     g.drawLine(drawPosition, (float)30 + thumbnailStartPoint + thumbnailHeight * 3, drawPosition,
         (float)30 + thumbnailStartPoint + thumbnailHeight * 3 + thumbnailHeight, 1.0f);
 }
 
 void DrumsDemixEditor::paintCursorHihat(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
-    auto audioLength = (float)thumbnailWav.getTotalLength();
+    auto audioLength = areaHihat.getAudioLength();
     float thumbnailHeight = (getHeight() - 200) / 5;
     float thumbnailStartPoint = (getHeight() / 9) + 10;
     g.setColour(juce::Colours::lightgrey);
-    auto audioPosition = (float)audioProcessor.transportProcessorHihat.getCurrentPosition();
+    auto audioPosition = (float)audioProcessor.transportProcessorHihat.getNextReadPosition();
     auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
     g.drawLine(drawPosition, (float)40 + thumbnailStartPoint + thumbnailHeight * 4, drawPosition,
         (float)40 + thumbnailStartPoint + thumbnailHeight * 4 + thumbnailHeight, 1.0f);
 }
 
 void DrumsDemixEditor::paintCursorCymbals(juce::Graphics& g, const juce::Rectangle<int>& thumbnailBounds, juce::AudioThumbnail& thumbnailWav, juce::Colour color) {
-    auto audioLength = (float)thumbnailWav.getTotalLength();
+    auto audioLength = areaCymbals.getAudioLength();
     float thumbnailHeight = (getHeight() - 200) / 5;
     float thumbnailStartPoint = (getHeight() / 9) + 10;
     g.setColour(juce::Colours::lightgrey);
-    auto audioPosition = (float)audioProcessor.transportProcessorCymbals.getCurrentPosition();
+    auto audioPosition = (float)audioProcessor.transportProcessorCymbals.getNextReadPosition();
     auto drawPosition = (audioPosition / audioLength) * (float)thumbnailBounds.getWidth() + (float)thumbnailBounds.getX();
     g.drawLine(drawPosition, (float)50 + thumbnailStartPoint + thumbnailHeight * 5, drawPosition,
         (float)50 + thumbnailStartPoint + thumbnailHeight * 5 + thumbnailHeight, 1.0f);

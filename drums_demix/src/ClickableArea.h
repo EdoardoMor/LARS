@@ -37,11 +37,13 @@ public:
 
     void setSrcInst(juce::MemoryAudioSource* sI){
         srcInst = sI;
+        length = srcInst->getTotalLength();
         if (!instIsPresent) instIsPresent = true;
     }
 
     void setSrc(juce::AudioFormatReaderSource* sF) {
         srcFull = sF;
+        length = srcFull->getTotalLength();
         if (!fullIsPresent) fullIsPresent = true;
     }
 
@@ -88,6 +90,10 @@ public:
         }
     }
 
+    float getAudioLength(){
+        return length;
+    }
+
 
 private:
     juce::DragAndDropContainer Container;
@@ -102,6 +108,8 @@ private:
 
     bool fullIsPresent = false;
     bool instIsPresent = false;
+
+    float length = 0.0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ClickableArea);
 
