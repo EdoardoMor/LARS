@@ -385,7 +385,7 @@ DrumsDemixEditor::DrumsDemixEditor(DrumsDemixProcessor& p)
 DrumsDemixEditor::~DrumsDemixEditor()
 {
 
-    DBG("chiudo....");
+    DBG("chiudo...");
     audioProcessor.transportProcessor.releaseResources();
     audioProcessor.transportProcessor.setSource(nullptr);
     delete thumbnail;
@@ -428,6 +428,9 @@ void DrumsDemixEditor::paint(juce::Graphics& g)
 
     background = juce::ImageFileFormat::loadFrom(BinaryData::LARS_png, BinaryData::LARS_pngSize);
     g.drawImageWithin(background, 5, 5, 380, 60, juce::RectanglePlacement::stretchToFit);
+
+    logopoli = juce::ImageFileFormat::loadFrom(BinaryData::logopoli_png, BinaryData::logopoli_pngSize);
+    g.drawImageWithin(logopoli, getWidth()- 100, 5, 90, 60, juce::RectanglePlacement::stretchToFit);
 
     //Background image
     //background = juce::ImageCache::getFromFile(absolutePath.getChildFile("C:/Users/Riccardo/OneDrive - Politecnico di Milano/Documenti/GitHub/DrumsDemix/drums_demix/images/DRUMS DEMIX.png"));
@@ -601,7 +604,7 @@ void DrumsDemixEditor::resized()
     downloadHihatButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 40 + thumbnailStartPoint + thumbnailHeight * 4, buttonHeight, buttonHeight);
     downloadCymbalsButton.setBounds(getWidth() - 220 + 10 + (getHeight() - 200) / 4 + buttonHeight + 10, 50 + thumbnailStartPoint + thumbnailHeight * 5, buttonHeight, buttonHeight);
 
-    progressThread.progress->setBounds(getWidth()/2 - 50, 2,100, 20);
+    progressThread.progress->setBounds(getWidth()/2 - 50, 5 + getHeight()/18 - 10, 100, 20);
 
 }
 

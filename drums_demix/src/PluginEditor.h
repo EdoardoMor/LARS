@@ -118,6 +118,7 @@ private:
     TransportState state;
     
     juce::Image background;
+    juce::Image logopoli;
     
     juce::ImageComponent imageKit;
     juce::ImageComponent imageKick;
