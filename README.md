@@ -22,7 +22,6 @@ An intuitive GUI gives all the possibilities to interact with the DAW and to ext
 * In the CMakeLists.txt file, modify these lines typing in your paths to the libtorch and Juce folders:
   * set(CMAKE_PREFIX_PATH "[your libtorch folder]")  [Line 25]
   * add_subdirectory([your JUCE folder] ./JUCE)   [Line 31]
-* Copy and paste the DrumsDemixUtils folder on your Desktop
 * From terminal, go to the project folder and run:
 ```console
 cmake -B build .
