@@ -21,7 +21,7 @@ LARS is available both as a VST3 and Audio Unit (AU) plug-in.
 * [Libtorch](https://pytorch.org/get-started/locally/)
 * [Juce](https://juce.com)
 
-## How to run it
+## How to run LARS
 * Download/clone the project repo
 * In the `CMakeLists.txt` file, modify the following lines by typing in the path to your LibTorch and JUCE folders:
   * `set(CMAKE_PREFIX_PATH "{your-libtorch-folder}")`  [Line 25]
@@ -38,15 +38,15 @@ cmake -B build .
   * Drag and drop your external files;
   * Click the load button.
 * Click the `separate` button and extract five drum kit stems:
-  * Kick
+  * Kick 
   * Snare
   * Toms
-  * Hihat
+  * Hi-hat
   * Cymbals
 * Use the `play`/`pause` buttons or double click on the waveforms to listen to the portion of the audio files you are more interested in.
 * You can download the separated stems in a `wav` format in two different ways:
   * Click the download button;
-  * Drag and drop the audio clip directly from the plug-in to anywhere you want!
+  * Drag and drop the audio clips directly from the plug-in to anywhere you want!
 
 ## Links
 
