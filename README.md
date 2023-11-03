@@ -2,7 +2,7 @@
 MAE Capston project - a Drums Demixing plugin
 
 <div style="background-color: rgb(167, 202, 212); border-radius: 15px; padding: 5px">
-<image src="drums_demix/DrumsDemixUtils/DrumsDemixImages/DD_GUI.png" style="margin-left: -2px; border-radius: 15px"></image>
+<image src="drums_demix/DrumsDemixUtils/DrumsDemixImages/GUI.png" style="margin-left: -2px; border-radius: 15px"></image>
 </div>
 
 
