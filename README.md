@@ -8,7 +8,7 @@ A Drums Demixing plugin
 
 
 ## Description
-We present Drums-Demix, the first to-our-knowledge neural network-based commercial application for drum stems separation. 
+We present LARS, the first to-our-knowledge neural network-based commercial application for drum stems separation. 
 Trained in Python and running in C++, our plug-in offers surprising versatility and ease of use to allow everybody to enjoy it either in a professional or amateur environment. 
 An intuitive GUI gives all the possibilities to interact with the DAW and to extract the separated tracks, besides being able to play independently the single audio files.
 
