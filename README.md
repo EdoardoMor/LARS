@@ -1,5 +1,5 @@
-# Drums-Demix
-MAE Capston project - a Drums Demixing plugin
+# LARS
+A Drums Demixing plugin
 
 <div style="background-color: rgb(167, 202, 212); border-radius: 15px; padding: 5px">
 <image src="drums_demix/DrumsDemixUtils/DrumsDemixImages/GUI.PNG" style="margin-left: -2px; border-radius: 15px"></image>
