@@ -8,13 +8,15 @@ A neural drums demixing plug-in
 
 
 ## Description
-We present LARS, the first open-source AI-powered plug-in for drum source separation.
+Introducing LARS, the first open-source AI-powered plug-in for drum source separation.
 
 Developed in Python and running in C++, LARS is a versatile tool for music producers and sound engineers alike. Thanks to its user-friendly interface, LARS makes it easy to accomplish complex tasks such as drum replacement, drum loop decomposition, audio restoration, remixing, and remastering—all within your DAW of choice.
 
 LARS can separate a stereo drum track into five audio stems: **kick drum**, **snare**, **toms**, **hi-hat**, and **cymbals**. 
 
 LARS is available both as a VST3 and Audio Unit (AU) plug-in.
+
+:warning: _**LARS is currently in beta.** Please help us improve it by reporting any bug. Note also that the source separation algorithm may change in later versions as we develop better drums demixing models._
 
 ## Requirements
 * [CMake](https://cmake.org) 
