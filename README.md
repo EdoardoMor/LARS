@@ -31,7 +31,7 @@ LARS is available both as a VST3 and Audio Unit (AU) plug-in.
 cmake -B build .
 ```
 * This will generate a project file in the build folder, open it.
-* Compile the plug-in with your favorite IDE and run it!
+* Compile the plug-in with your favorite IDE (we tested it only on VSCommunity and XCode) and run it!
 
 ## Functionalities
 * Load your drum tracks:
