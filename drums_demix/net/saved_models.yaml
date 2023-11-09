@@ -1,0 +1,5 @@
+kick: 'checkpoints/kick.pth'
+snare: 'checkpoints/snare.pth'
+toms: 'checkpoints/toms.pth'
+hihat: 'checkpoints/hihat.pth'
+cymbals: 'checkpoints/cymbals.pth'
