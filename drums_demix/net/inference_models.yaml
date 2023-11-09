@@ -1,5 +1,0 @@
-kick: 'C:/POLIMI/MAE_Capstone/Drums_Demix_models/saved_models/kick/unet__v3__mode=stft__freqBN__size=(2,2048,512)__batch=24__lr=0.0001__segment=11.85__shift=2.0/ckpt_epoch_021.pth'
-snare: 'C:/POLIMI/MAE_Capstone/Drums_Demix_models/saved_models/snare/unet__v3__mode=stft__freqBN__size=(2,2048,512)__batch=24__lr=0.0001__segment=11.85__shift=2.0/ckpt_epoch_022.pth'
-toms: 'C:/POLIMI/MAE_Capstone/Drums_Demix_models/saved_models/toms/unet__v3__mode=stft__freqBN__size=(2,2048,512)__batch=24__lr=0.0001__segment=11.85__shift=2.0/ckpt_epoch_020.pth'
-hihat: 'C:/POLIMI/MAE_Capstone/Drums_Demix_models/saved_models/hihat/unet__v3__mode=stft__freqBN__size=(2,2048,512)__batch=24__lr=0.0001__segment=11.85__shift=2.0/ckpt_epoch_022.pth'
-cymbals: 'C:/POLIMI/MAE_Capstone/Drums_Demix_models/saved_models/cymbals/unet__v3__mode=stft__freqBN__size=(2,2048,512)__batch=24__lr=0.0001__segment=11.85__shift=2.0/ckpt_epoch_020.pth'
