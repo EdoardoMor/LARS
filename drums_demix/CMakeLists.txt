@@ -144,8 +144,9 @@ juce_add_binary_data(LARS_data
         Resources/cymbals.png
         Resources/browse2.png
         Resources/browse.png
-        Resources/background.png
         Resources/5.png
+        Resources/LARS.png
+        Resources/logopoli.png
 )
 
 target_link_libraries(LARS
