@@ -51,6 +51,9 @@ cmake -B build .
   * Click the download button;
   * Drag and drop the audio clips directly from the plug-in to anywhere you want!
 
+## License
+Under the hood, LARS runs [LarsNet](https://github.com/polimi-ispl/larsnet), whose weights are distributed under a CC BY-NC 4.0 license. 
+
 ## Links
 
 * [Presentation](https://drive.google.com/file/d/19SA2RIHljjGD7Um65_ZcaB2VlucqQiXA/view?usp=drivesdk)
